@@ -1,0 +1,23 @@
+{
+  "name": "devbuddy",
+  "version": "1.0.0",
+  "description": "\"Finding project partners made east\"",
+  "homepage": "https://github.com/moiz-naeem/DevBuddy#readme",
+  "bugs": {
+    "url": "https://github.com/moiz-naeem/DevBuddy/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/moiz-naeem/DevBuddy.git"
+  },
+  "license": "MIT",
+  "author": "Moiz Naeem",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}
