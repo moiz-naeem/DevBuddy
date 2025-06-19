@@ -3,17 +3,29 @@ const app = express();
 const User = require('./models/User')
 const initializeDB = require('./config/database');
 const { default: mongoose } = require("mongoose");
+const {validateSignUpData} = require('./utils/validation.js');
+const bcrypt = require('bcrypt')
+
 
 app.use(express.json());
 
 app.post("/signup",  async (req, res) => {
   try{
-    const user =  new User(req.body);
     const necessaryFields = ["firstName", "lastName", "email", "password"]
     const containNecessaryFields =  Object.keys(req.body).every(k => necessaryFields.includes(k))
     if(!containNecessaryFields){
       throw new Error("We only need firstName, lastName, email and password")
     }
+    const{firstName, lastName, email, password} = req.body;
+    validateSignUpData(req)
+    const hashedPassword = await bcrypt.hash(password, 10)
+    const user =  new User({
+      firstName,
+      lastName,
+      email,
+      password: hashedPassword
+    });
+    
     await user.save();
     res.send(`${user.firstName} added successfully!`)
   }catch(error){

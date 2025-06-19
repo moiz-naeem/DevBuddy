@@ -37,8 +37,6 @@ const userSchema = new mongoose.Schema(
     password: {
       type: String,
       required: [true, "Can not continue without password"],
-      minLength: [8, `Minimum length of password is 8 got {VALUE}`],
-      maxLength: [50, `Maximum length of first name is 50 got {VALUE}`],
       validate :{
         validator: function(value) {
             if(!validator.isStrongPassword(value)){
