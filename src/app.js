@@ -7,11 +7,13 @@ const {validateSignUpData} = require('./utils/validation.js');
 const bcrypt = require('bcrypt')
 const validator = require('validator')
 const jwt = require('jsonwebtoken')
+const {userAuth} = require("./middlewares/Auth.js")
 const cookieParser = require('cookie-parser') 
 
 
 app.use(express.json());
 app.use(cookieParser())
+
 
 app.post("/signup",  async (req, res) => {
   try{
@@ -69,18 +71,11 @@ app.post("/login", async (req, res) => {
   }
 })
 
-app.get("/profile", async (req, res) =>{
+app.get("/profile", userAuth, async (req, res) =>{
   try{
-    const cookie = req.cookies;
-    console.log(cookie)
-    if(Object.keys(cookie).length === 0){
-      return res.status(400).send("Please log in")
-    }
-    const token  = cookie.token;
-    console.log(token)
-    
-    const {_id} = await jwt.verify(token , "deVbuDdy!2@", )
-    const user =  await User.findById(_id)
+    const user =  req.user;
+    console.log("user " + user)
+
     return res.send("Logged in user: " +  user.firstName + " " + user.lastName)
 
   }catch(err){
@@ -88,7 +83,7 @@ app.get("/profile", async (req, res) =>{
   }
 })
 
-app.patch("/user/:userId", async(req, res) => {
+app.patch("/user/:userId", userAuth,  async(req, res) => {
   const userId = req.params.userId;
   const data = req.body;
   try{
@@ -109,7 +104,7 @@ app.patch("/user/:userId", async(req, res) => {
   }
 })
 
-app.get("/feed", async (req, res) => {
+app.get("/feed", userAuth, async (req, res) => {
   try{
       const users = await User.find({});
       if(users.length === 0){
