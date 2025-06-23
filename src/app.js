@@ -5,6 +5,7 @@ const initializeDB = require('./config/database');
 const { default: mongoose } = require("mongoose");
 const {validateSignUpData} = require('./utils/validation.js');
 const bcrypt = require('bcrypt')
+const validator = require('validator')
 
 
 app.use(express.json());
@@ -32,6 +33,32 @@ app.post("/signup",  async (req, res) => {
     res.status(400).send("User registration unsuccessful " + error);
   }
   
+})
+
+app.post("/login", async (req, res) => {
+  try{
+    const{email, password} = req.body;
+    if(!validator.isEmail(email) || !password || (password.trim().length === 0) ){
+      res.status(400).send("Invalid input. Please provide a valid email and password.")
+    }
+    
+    const user =  await User.findOne({email : email});
+    if(!user){
+      res.status(401).send("Invalid Credentials")
+    }
+    const isValid = await bcrypt.compare(password, user.password)
+
+    if(!isValid){
+      res.status(401).send("Invalid Credentials")
+
+    }
+    res.send("Login Successfull");
+
+  }
+  catch(err){
+    console.error("Error during login:", err);
+    res.status(500).send("An error occurred during login. Please try again later.");
+  }
 })
 
 app.patch("/user/:userId", async(req, res) => {
