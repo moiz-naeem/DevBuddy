@@ -6,9 +6,12 @@ const { default: mongoose } = require("mongoose");
 const {validateSignUpData} = require('./utils/validation.js');
 const bcrypt = require('bcrypt')
 const validator = require('validator')
+const jwt = require('jsonwebtoken')
+const cookieParser = require('cookie-parser') 
 
 
 app.use(express.json());
+app.use(cookieParser())
 
 app.post("/signup",  async (req, res) => {
   try{
@@ -26,38 +29,62 @@ app.post("/signup",  async (req, res) => {
       email,
       password: hashedPassword
     });
-    
+
     await user.save();
-    res.send(`${user.firstName} added successfully!`)
+    return res.send(`${user.firstName} added successfully!`)
   }catch(error){
-    res.status(400).send("User registration unsuccessful " + error);
+    return res.status(400).send("User registration unsuccessful " + error);
   }
   
 })
+
+
 
 app.post("/login", async (req, res) => {
   try{
     const{email, password} = req.body;
     if(!validator.isEmail(email) || !password || (password.trim().length === 0) ){
-      res.status(400).send("Invalid input. Please provide a valid email and password.")
+      return res.status(400).send("Invalid input. Please provide a valid email and password.")
     }
     
     const user =  await User.findOne({email : email});
     if(!user){
-      res.status(401).send("Invalid Credentials")
+      return res.status(401).send("Invalid Credentials")
     }
     const isValid = await bcrypt.compare(password, user.password)
 
     if(!isValid){
-      res.status(401).send("Invalid Credentials")
+      return res.status(401).send("Invalid Credentials")
 
     }
-    res.send("Login Successfull");
+    const cookie = await jwt.sign({_id : user._id}, "deVbuDdy!2@")
+    res.cookie("token" ,  cookie) 
+    console.log(cookie)
+    return res.send("Login Successfull");
 
   }
   catch(err){
     console.error("Error during login:", err);
-    res.status(500).send("An error occurred during login. Please try again later.");
+    return res.status(500).send("An error occurred during login. Please try again later.");
+  }
+})
+
+app.get("/profile", async (req, res) =>{
+  try{
+    const cookie = req.cookies;
+    console.log(cookie)
+    if(Object.keys(cookie).length === 0){
+      return res.status(400).send("Please log in")
+    }
+    const token  = cookie.token;
+    console.log(token)
+    
+    const {_id} = await jwt.verify(token , "deVbuDdy!2@", )
+    const user =  await User.findById(_id)
+    return res.send("Logged in user: " +  user.firstName + " " + user.lastName)
+
+  }catch(err){
+    return res.status(500).send("Error loading profile" + err)
   }
 })
 
@@ -86,10 +113,10 @@ app.get("/feed", async (req, res) => {
   try{
       const users = await User.find({});
       if(users.length === 0){
-        res.status(404).send("We dont have user yet");
-      }else{
-        res.send(users);
+        return res.status(404).send("We dont have user yet");
       }
+      return res.send(users);
+      
   }catch(err){
     res.status(400).send("Something went wrong: " + err);
   }
