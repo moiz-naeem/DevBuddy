@@ -53,15 +53,15 @@ app.post("/login", async (req, res) => {
     if(!user){
       return res.status(401).send("Invalid Credentials")
     }
-    const isValid = await bcrypt.compare(password, user.password)
+    const isValid = await user.verifyPassword(password);
 
     if(!isValid){
       return res.status(401).send("Invalid Credentials")
 
     }
-    const cookie = await jwt.sign({_id : user._id}, "deVbuDdy!2@")
-    res.cookie("token" ,  cookie) 
-    console.log(cookie)
+
+    const token = await user.getJWT();
+    res.cookie("token" ,  token, {expires: new Date(Date.now() + 7 * 24 * 3600000)}) 
     return res.send("Login Successfull");
 
   }
@@ -80,6 +80,16 @@ app.get("/profile", userAuth, async (req, res) =>{
 
   }catch(err){
     return res.status(500).send("Error loading profile" + err)
+  }
+})
+
+app.post("/request", userAuth, async(req, res) => {
+  try{
+    const user = req.user;
+    res.send(user.firstName + " send a connection request")
+
+  }catch(err){
+    return res.status(500).send("Error sending connection request " + err)
   }
 })
 
