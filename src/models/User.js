@@ -89,4 +89,5 @@ userSchema.methods.verifyPassword = async function (plainPassword){
   const isValid = await bcrypt.compare(plainPassword, user.password)
   return isValid;
 }
+
 module.exports = mongoose.model("User", userSchema);

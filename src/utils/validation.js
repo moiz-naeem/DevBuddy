@@ -15,5 +15,11 @@ const validateSignUpData = (req) => {
   }
 };
 
+const checkValidBody = (bodyFields, allowedFields) => {
+  return Object.keys(bodyFields).every((key) =>  allowedFields.includes(key))
+}
 
-module.exports = {validateSignUpData}
+
+
+
+module.exports = {validateSignUpData, checkValidBody}
