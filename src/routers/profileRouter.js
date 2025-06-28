@@ -7,6 +7,7 @@ const bcrypt = require("bcrypt")
 const validator = require('validator');
 
 
+
 const profileRouter = express.Router();
 
 profileRouter.get("/profile/view", userAuth, async (req, res) =>{

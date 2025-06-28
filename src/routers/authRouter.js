@@ -1,4 +1,4 @@
-const {validateSignUpData} = require('../utils/validation.js');
+const {validateSignUpData, checkValidBody} = require('../utils/validation.js');
 const User = require('../models/User')
 const bcrypt = require('bcrypt')
 const validator = require('validator')
@@ -12,8 +12,7 @@ const authRouter = express.Router();
 
 authRouter.post("/signup",  async (req, res) => {
   try{
-    const necessaryFields = ["firstName", "lastName", "email", "password"]
-    const containNecessaryFields =  Object.keys(req.body).every(k => necessaryFields.includes(k))
+    const containNecessaryFields =  checkValidBody(req.body, ["firstName", "lastName", "email", "password"]) 
     if(!containNecessaryFields){
       throw new Error("We only need firstName, lastName, email and password")
     }
