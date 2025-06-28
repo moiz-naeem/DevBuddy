@@ -19,7 +19,15 @@ const checkValidBody = (bodyFields, allowedFields) => {
   return Object.keys(bodyFields).every((key) =>  allowedFields.includes(key))
 }
 
+const isObjectEmpty = (objectName) => {
+  return (
+    !objectName ||
+    (Object.keys(objectName).length === 0 && objectName.constructor === Object)
+  );
+};
 
 
 
-module.exports = {validateSignUpData, checkValidBody}
+
+
+module.exports = {validateSignUpData, checkValidBody, isObjectEmpty}
