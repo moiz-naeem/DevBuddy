@@ -2,6 +2,7 @@ const {validateSignUpData, checkValidBody} = require('../utils/validation.js');
 const User = require('../models/User')
 const bcrypt = require('bcrypt')
 const validator = require('validator')
+const {userAuth} = require('../middlewares/Auth.js')
 
 
 const express = require('express')
@@ -55,7 +56,7 @@ authRouter.post("/login", async (req, res) => {
     }
 
     const token = await user.getJWT();
-    res.cookie("token" ,  token, {expires: new Date(Date.now() + 7 * 24 * 3600000)}) 
+    res.cookie("authToken" ,  token, {expires: new Date(Date.now() + 7 * 24 * 3600000)}) 
     return res.send("Login Successfull");
 
   }
@@ -65,9 +66,16 @@ authRouter.post("/login", async (req, res) => {
   }
 })
 
-authRouter.post("/logout", (req, res) => {
-    res.cookie({expires: new Date(Date.now())})
-    res.send("Logout Successful!!")
-})
+authRouter.post("/logout", userAuth, (req, res) => {
+    res.cookie('authToken', '', { 
+        expires: new Date(), 
+        httpOnly: true,    
+        secure: true,   
+        sameSite: 'strict'  
+    });
+
+    res.status(200).send("Logout Successful!!");
+});
+
 
 module.exports = authRouter;

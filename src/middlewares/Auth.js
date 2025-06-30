@@ -4,11 +4,11 @@ const User = require("../models/User");
 const userAuth = async (req, res, next) => {
   try {
     const cookie = req.cookies;
-    const { token } = cookie;
-    if (token === undefined) {
+    const { authToken } = cookie;
+    if (authToken === undefined) {
       return res.status(400).send("No valid JWt token found");
     }
-    const { _id } = await jwt.verify(token, "deVbuDdy!2@");
+    const { _id } = await jwt.verify(authToken, "deVbuDdy!2@");
     const user = await User.findById(_id);
     if(!user){
         return res.status(400).send("Invalid JWT token")
