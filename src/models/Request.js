@@ -6,10 +6,12 @@ const requestSchema = mongoose.Schema(
     {
         sendBy:{
             type: mongoose.Types.ObjectId,
+            ref: "User",
             required: [true, "Who sent the request? Can not find the sender"],
         },
         sentTo:{
             type: mongoose.Types.ObjectId,
+            ref: "User",
             required: [true, "Whom are you sending request to? Can not find data in request."]
         },
         status:{
