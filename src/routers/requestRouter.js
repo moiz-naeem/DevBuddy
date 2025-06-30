@@ -176,20 +176,6 @@ requestRouter.post(
   }
 );
 
-requestRouter.get("/user/connections", userAuth, async (req, res) => {});
 
-requestRouter.get("/request/received", userAuth, async (req, res) => {});
-
-requestRouter.get("/feed", userAuth, async (req, res) => {
-  try {
-    const users = await User.find({});
-    if (users.length === 0) {
-      return res.status(404).send("We dont have user yet");
-    }
-    return res.send(users);
-  } catch (err) {
-    res.status(400).send("Something went wrong: " + err);
-  }
-});
 
 module.exports = requestRouter;

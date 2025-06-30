@@ -6,6 +6,7 @@ const { default: mongoose } = require("mongoose");
 const authRouter = require('./routers/authRouter.js')
 const profileRouter = require('./routers/profileRouter.js');
 const requestRouter = require('./routers/requestRouter.js')
+const userRouter = require('./routers/userRouter.js')
 
 const bcrypt = require('bcrypt')
 const validator = require('validator')
@@ -21,6 +22,7 @@ app.use(cookieParser())
 app.use("/", authRouter )
 app.use("/", profileRouter)
 app.use("/", requestRouter)
+app.use("/", userRouter)
 
 initializeDB()
   .then(() => {
