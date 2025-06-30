@@ -15,14 +15,23 @@ requestRouter.post(
     try {
       const loggedInUser = req.user;
       const requestBeingSentTo = req.params.userId;
-      const secondParticipant = await User.findById(requestBeingSentTo).lean();
       const reqStatus = req.params.status;
 
-      const isValidStatus = checkValidBody(reqStatus, [
-        "interested",
-        "ignored",
-      ]);
+      if (!reqStatus || !requestBeingSentTo) {
+          return res.status(400).send("Status or User ID is missing.");
+}
 
+      const isValidStatus = ["interested", "ignored"].includes(reqStatus);
+
+      if(!isValidStatus){
+        return res.status(400).send("Invalid request status!!")
+      }
+      if (!mongoose.Types.ObjectId.isValid(requestBeingSentTo)) {
+        return res.status(400).send("Invalid user ID.");
+      }
+
+      const secondParticipant = await User.findById(requestBeingSentTo).lean();
+      
       if (!secondParticipant) {
         return res.status(400).send("Sending request to a non-existent user");
       }
@@ -31,13 +40,6 @@ requestRouter.post(
         return res.status(400).send("Sorry, can not send request to yourself!");
       }
 
-      if (!mongoose.Types.ObjectId.isValid(requestBeingSentTo)) {
-        return res.status(400).send("Invalid user ID.");
-      }
-
-      if (typeof reqStatus !== "string") {
-        return res.status(400).send("Invalid status format.");
-      }
 
       const connectionExists = await Connection.findOne({
         $or : [
@@ -47,8 +49,8 @@ requestRouter.post(
       })
       
 
-      if(!isObjectEmpty(connectionExists) ){
-        return res.status(400).send(`Connection between ${loggedInUser.firstName} ${secondParticipant.firstName} already exists`)
+      if(connectionExists){
+        return res.status(400).send(`Connection between ${loggedInUser.firstName} ${secondParticipant.firstName} of status ${connectionExists.status} already exists`)
       }
 
       const connectionRequestExists = await Request.findOne({
@@ -58,40 +60,55 @@ requestRouter.post(
         ],
       }).lean();
 
-      if (!isObjectEmpty(connectionRequestExists)) {
-        if (
-          connectionRequestExists.status === "interested" &&
-          reqStatus === "interested"
-        ) {
+      if(!connectionRequestExists){
+        return res.send(
+        `${loggedInUser.firstName}  ${loggedInUser.lastName} sent connection request of status ${reqStatus} to ${secondParticipant.firstName} ${secondParticipant.lastName}`
+      );
+      }
+
+      if(connectionRequestExists.sendBy === loggedInUser){
+        return res.status(400).send(`You already have a pending request of status ${connectionRequestExists.status} to ${secondParticipant.firstName} ${secondParticipant.lastName}`)
+      }
+
+      if(connectionRequestExists.status === "interested" &&
+          reqStatus === "interested"){
           const connection = new Connection({
             firstParticipant: loggedInUser._id,
             secondParticipant: secondParticipant._id,
             status: "accepted",
           });
           await connection.save();
+          await Request.deleteOne({
+            sendBy: secondParticipant._id,
+            sendTo: loggedInUser._id
+          })
+
           return res
             .status(200)
             .send(
               `It's a match between ${loggedInUser.firstName} ${secondParticipant.firstName} !!`
             );
-        }
-        return res
-          .status(400)
-          .send(
-            `Connection request between ${loggedInUser.firstName} ${secondParticipant.firstName} of status ${connectionRequestExists.status} already exists!`
-          );
       }
 
-      const connectionRequest = new Request({
-        sendBy: loggedInUser,
-        sentTo: requestBeingSentTo,
-        status: reqStatus,
-      });
-      await connectionRequest.save();
+      //connection request exists, sentBy the other user to logged in user, if other user send req of status ignored and loggedin user send req of staus interested 
+      //no change should be made but if the other use sends a request of status interested and logged in user is sending request of status ignored then a new connection
+      // should be made of status rejected
 
-      return res.send(
-        `${loggedInUser.firstName}  ${loggedInUser.lastName} sent connection request of status ${reqStatus} to ${secondParticipant.firstName}`
-      );
+      if((connectionRequestExists.status === 'ignored' && reqStatus === 'interested')
+          || (connectionRequestExists.status === 'interested' && reqStatus === 'ignored') )
+        {
+          const connection = new Connection({
+            firstParticipant: secondParticipant._id,
+            secondParticipant: loggedInUser._id,
+            status: 'rejected'
+          })
+          await connection.save();
+          res.send(`Unfortunately it was not a match. ${connectionRequestExists}. Therefore connection of status rejected`)
+          await Request.deleteOne(connectionRequestExists)
+          
+        }
+
+      
     } catch (err) {
       return res.status(400).send("Error sending connection request " + err);
     }
