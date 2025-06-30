@@ -61,6 +61,15 @@ requestRouter.post(
       }).lean();
 
       if(!connectionRequestExists){
+        const requestConnection = new Request(
+          {
+            sendBy: loggedInUser._id,
+            sentTo: secondParticipant._id,
+            status: reqStatus
+          }
+        )
+        await requestConnection.save();
+
         return res.send(
         `${loggedInUser.firstName}  ${loggedInUser.lastName} sent connection request of status ${reqStatus} to ${secondParticipant.firstName} ${secondParticipant.lastName}`
       );
@@ -93,20 +102,18 @@ requestRouter.post(
       //connection request exists, sentBy the other user to logged in user, if other user send req of status ignored and loggedin user send req of staus interested 
       //no change should be made but if the other use sends a request of status interested and logged in user is sending request of status ignored then a new connection
       // should be made of status rejected
-
-      if((connectionRequestExists.status === 'ignored' && reqStatus === 'interested')
-          || (connectionRequestExists.status === 'interested' && reqStatus === 'ignored') )
-        {
-          const connection = new Connection({
-            firstParticipant: secondParticipant._id,
-            secondParticipant: loggedInUser._id,
-            status: 'rejected'
+      
+      const connection = new Connection({
+          firstParticipant: secondParticipant._id,
+          secondParticipant: loggedInUser._id,
+          status: 'rejected'
           })
-          await connection.save();
-          res.send(`Unfortunately it was not a match. ${connectionRequestExists}. Therefore connection of status rejected`)
-          await Request.deleteOne(connectionRequestExists)
+        await connection.save();
+        await Request.deleteOne(connectionRequestExists)
+
+        res.send(`Unfortunately it was not a match. ${connectionRequestExists}. Therefore connection of status rejected`)
           
-        }
+      
 
       
     } catch (err) {
@@ -116,28 +123,57 @@ requestRouter.post(
 );
 
 requestRouter.post(
-  "/request/send/ignored/:userId",
+  "/request/review/:status/:requestId",
   userAuth,
   async (req, res) => {
     try {
-      const user = req.user;
-      res.send(user.firstName + " send a connection request");
+      const { status, requestId } = req.params;
+      const isValidStatus = ["accepted", "rejected"].includes(status);
+      const loggedInUser = req.user;
+
+      if(!status || !requestId){
+        return res.status(400).send("Status or Request id missing!!")
+      }
+
+      if (!isValidStatus) {
+        return res.status(400).send("Invalid request status");
+      }
+      if (!mongoose.Types.ObjectId.isValid(requestId)) {
+        return res.status(400).send("Invalid req id!");
+      }
+      const requestExist = await Request.findOne({_id : requestId, sentTo: loggedInUser._id, status: 'interested'});
+
+      if(!requestExist){
+        return res.status(404).send("No record found against request id with status interested")
+      }
+
+      if(status === 'accepted'){
+        const connection = new Connection({
+          firstParticipant: loggedInUser._id,
+          secondParticipant : requestExist.sendBy,
+          status : 'accepted'
+
+        })
+        await connection.save();
+        await Request.deleteOne(requestExist);
+        return res.status(200).send(`${loggedInUser.firstName} ${loggedInUser.lastName} accepted ${requestExist.sendBy} 's request`)
+      }
+
+      const connection = new Connection({
+          firstParticipant: loggedInUser._id,
+          secondParticipant : requestExist.sendBy,
+          status : 'rejected'
+
+        })
+      await connection.save();
+      await Request.deleteOne(requestExist);
+      res.status(200).send(`${loggedInUser.firstName} ${loggedInUser.lastName} rejected ${requestExist.sendBy} 's request`)
+
+
     } catch (err) {
-      return res.status(500).send("Error sending connection request " + err);
+      return res.status(400).send("Error reviewing the request: " + err);
     }
   }
-);
-
-requestRouter.post(
-  "/request/review/accepted/:requestId",
-  userAuth,
-  async (req, res) => {}
-);
-
-requestRouter.post(
-  "/request/review/rejected/:requestId",
-  userAuth,
-  async (req, res) => {}
 );
 
 requestRouter.get("/user/connections", userAuth, async (req, res) => {});

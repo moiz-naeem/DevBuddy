@@ -15,7 +15,7 @@ const connectionSchema = mongoose.Schema(
         status:{
             type: String,
             required: [true, "What kind of request are you sending? Can't find the status."],
-            enum: ['accepted', 'blocked']
+            enum: ['accepted', 'blocked', 'rejected']
         }
 
     }, {timestamps: true}
