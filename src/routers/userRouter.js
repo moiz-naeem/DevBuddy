@@ -15,10 +15,18 @@ userRouter.get("/user/connections", userAuth, async (req, res) => {
                 {firstParticipant: loggedInUser._id, status : 'accepted'},
                 {secondParticipant: loggedInUser._id, status : 'accepted' }
             ]
-        }).populate(firstParticipant, safeToSendUserData).populate(secondParticipant, safeToSendUserData)
+        }).populate("firstParticipant", safeToSendUserData).populate("secondParticipant", safeToSendUserData)
+
+        const data = connections.map(row => {
+            if( (row.firstParticipant._id).equals(loggedInUser._id) ){
+                return row.secondParticipant;
+            }
+            return row.firstParticipant;
+        }
+        )
 
         return res.json({
-            data: connections
+            data: data
         })
 
     }catch(err){
