@@ -39,6 +39,17 @@ authRouter.post("/signup",  async (req, res) => {
 
 authRouter.post("/login", async (req, res) => {
   try{
+    if (req.cookies.authToken) {
+      res.cookie("authToken", "", {
+        expires: new Date(0), 
+        httpOnly: true,
+        secure: true, 
+        sameSite: "strict",
+      });
+      return res
+        .status(400)
+        .send("A session was already active. The user has been logged out. Please try logging in again.");
+    }
     const{email, password} = req.body;
     if(!validator.isEmail(email) || !password || (password.trim().length === 0) ){
       return res.status(400).send("Invalid input. Please provide a valid email and password.")
