@@ -7,7 +7,7 @@ const Connection = require("../models/Connection.js");
 const mongoose = require("mongoose");
 
 const requestRouter = express.Router();
-
+//if user sends interested requests twice it become a match
 requestRouter.post(
   "/request/send/:status/:userId",
   userAuth,

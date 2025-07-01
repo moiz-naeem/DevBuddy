@@ -2,6 +2,7 @@ const express = require('express');
 const userRouter = express.Router();
 const Request = require('../models/Request')
 const Connection = require('../models/Connection')
+const User = require('../models/User')
 const {userAuth} = require('../middlewares/Auth')
 
 const safeToSendUserData = "firstName lastName age about skills gender photourl";
@@ -66,13 +67,43 @@ userRouter.get("/user/request/received", userAuth, async (req, res) => {
 
 userRouter.get("/feed", userAuth, async (req, res) => {
   try {
-    const users = await User.find({});
-    if (users.length === 0) {
-      return res.status(404).send("We dont have user yet");
-    }
-    return res.send(users);
+    const page = parseInt(req.query.page) || 1;
+    let limit = parseInt(req.query.limit) || 10
+    limit = limit > 50 ? 50 : limit;
+    const loggedInUser = req.user;
+
+    const exisitingConnections =  await Connection.find({
+        $or: [
+            {firstParticipant: loggedInUser._id},
+            {secondParticipant: loggedInUser._id}
+        ]
+  });
+
+    const anotherUserInConnection = exisitingConnections.map(connection => {
+        if(connection.firstParticipant._id.equals(loggedInUser._id)){
+            return connection.secondParticipant.toString()
+        }
+        return connection.firstParticipant.toString()
+   })
+    const totalRequests = await Request.find({sendBy: loggedInUser._id})
+    const requestsAlreadySent = totalRequests.map(request => {
+        return request.sentTo.toString()
+    })
+
+    console.log(anotherUserInConnection)
+    console.log(requestsAlreadySent)
+
+    const blockedUsers = [...anotherUserInConnection, ...requestsAlreadySent, loggedInUser._id.toString()];
+
+    const userForFeed = await User.find({
+        _id : {$nin: blockedUsers}
+    }).skip((page-1)*10).limit(limit)
+
+    res.json({users: userForFeed});
+    
+
   } catch (err) {
-    res.status(400).send("Something went wrong: " + err);
+    res.status(400).json({error: err.message});
   }
 });
 
