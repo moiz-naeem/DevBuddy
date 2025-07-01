@@ -1,4 +1,5 @@
 const validator = require("validator");
+const rateLimit = require('express-rate-limit');
 
 const validateSignUpData = (req) => {
   const { firstName, lastName, email, password } = req.body;
@@ -27,7 +28,16 @@ const isObjectEmpty = (objectName) => {
 };
 
 
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, 
+  max: 5, 
+  message: "Too many login attempts. Please try again later.",
+});
 
 
 
-module.exports = {validateSignUpData, checkValidBody, isObjectEmpty}
+
+
+
+
+module.exports = {validateSignUpData, checkValidBody, isObjectEmpty, loginLimiter}

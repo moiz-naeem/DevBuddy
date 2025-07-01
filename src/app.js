@@ -8,6 +8,8 @@ const profileRouter = require('./routers/profileRouter.js');
 const requestRouter = require('./routers/requestRouter.js')
 const userRouter = require('./routers/userRouter.js')
 
+
+
 const bcrypt = require('bcrypt')
 const validator = require('validator')
 const jwt = require('jsonwebtoken')
@@ -17,7 +19,6 @@ const cookieParser = require('cookie-parser')
 
 app.use(express.json());
 app.use(cookieParser())
-
 
 app.use("/", authRouter )
 app.use("/", profileRouter)

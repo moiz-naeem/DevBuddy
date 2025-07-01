@@ -3,6 +3,7 @@ const User = require('../models/User')
 const bcrypt = require('bcrypt')
 const validator = require('validator')
 const {userAuth} = require('../middlewares/Auth.js')
+const loginLimiter = require('../utils/validation.js')
 
 
 const express = require('express')
@@ -37,9 +38,13 @@ authRouter.post("/signup",  async (req, res) => {
 
 
 //if someone is already logged in check if it is the same user as the one loggin in if true then tell them you are already logged in
-authRouter.post("/login", async (req, res) => {
+authRouter.post("/login",  async (req, res) => {
   try{
+    const{email, password} = req.body;
+
+    
     if (req.cookies.authToken) {
+      
       res.cookie("authToken", "", {
         expires: new Date(0), 
         httpOnly: true,
@@ -48,11 +53,11 @@ authRouter.post("/login", async (req, res) => {
       });
       return res
         .status(400)
-        .send("A session was already active. The user has been logged out. Please try logging in again.");
+        .json({message: "A session was already active. The user has been logged out. Please try logging in again."});
     }
-    const{email, password} = req.body;
+
     if(!validator.isEmail(email) || !password || (password.trim().length === 0) ){
-      return res.status(400).send("Invalid input. Please provide a valid email and password.")
+      return res.status(400).json({error: "Invalid input. Please provide a valid email and password."})
     }
     
     const user =  await User.findOne({email : email});
@@ -67,7 +72,11 @@ authRouter.post("/login", async (req, res) => {
     }
 
     const token = await user.getJWT();
-    res.cookie("authToken" ,  token, {expires: new Date(Date.now() + 7 * 24 * 3600000)}) 
+    res.cookie("authToken", token, {
+      httpOnly: true,
+      sameSite: "strict",
+      expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+    });
     return res.send("Login Successfull");
 
   }
