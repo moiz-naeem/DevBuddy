@@ -76,7 +76,7 @@ requestRouter.post(
       });
       }
 
-      if(connectionRequestExists.sendBy === loggedInUser){
+      if(connectionRequestExists.sendBy === loggedInUser._id){
         return res.status(400).json({error: `You already have a pending request of status ${connectionRequestExists.status} to ${secondParticipant.firstName} ${secondParticipant.lastName}`})
       }
 
