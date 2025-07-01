@@ -95,11 +95,13 @@ userRouter.get("/feed", userAuth, async (req, res) => {
 
     const blockedUsers = [...anotherUserInConnection, ...requestsAlreadySent, loggedInUser._id.toString()];
 
+    const shouldNotBeInFeed = await User.find({_id : {$in: blockedUsers}})
+
     const userForFeed = await User.find({
         _id : {$nin: blockedUsers}
     }).skip((page-1)*10).limit(limit)
 
-    res.json({users: userForFeed});
+    res.json({users: userForFeed, blocked: shouldNotBeInFeed});
     
 
   } catch (err) {

@@ -10,7 +10,7 @@ const express = require('express')
 
 const authRouter = express.Router();
 
-
+//check if there is any active session before signing up new user
 authRouter.post("/signup",  async (req, res) => {
   try{
     const containNecessaryFields =  checkValidBody(req.body, ["firstName", "lastName", "email", "password"]) 
@@ -36,7 +36,7 @@ authRouter.post("/signup",  async (req, res) => {
 })
 
 
-
+//if someone is already logged in check if it is the same user as the one loggin in if true then tell them you are already logged in
 authRouter.post("/login", async (req, res) => {
   try{
     if (req.cookies.authToken) {
