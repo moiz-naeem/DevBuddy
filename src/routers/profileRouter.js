@@ -15,10 +15,10 @@ profileRouter.get("/profile/view", userAuth, async (req, res) =>{
     const user =  req.user;
     console.log("user " + user)
 
-    return res.send("Logged in user: " +  user.firstName + " " + user.lastName)
+    return res.json({message :"Logged in user is " +  user.firstName + " " + user.lastName})
 
   }catch(err){
-    return res.status(500).send("Error loading profile" + err)
+    return res.status(400).json({error: "Error loading profile" + err})
   }
 })
 
@@ -32,7 +32,6 @@ profileRouter.patch("/profile/edit/", userAuth, async (req, res) => {
       );
     }
     const loggedInUser = req.user;
-    console.log("Logged in :" + loggedInUser);
     if (
       "skills" in fieldsSentByUser &&
       Array.isArray(fieldsSentByUser.skills) &&
@@ -48,9 +47,9 @@ profileRouter.patch("/profile/edit/", userAuth, async (req, res) => {
       fieldsSentByUser,
       { returnDocument: "after", runValidators: "true" }
     );
-    res.send(`${req.body.firstName} updated successfully`);
+    return res.json({message: `${req.body.firstName} updated successfully`});
   } catch (error) {
-    res.status(400).send("Error updating " + error);
+    res.status(400).json({error: "Error updating " + error});
   }
 });
 
@@ -68,20 +67,20 @@ profileRouter.patch("/profile/password", userAuth, async (req, res) => {
     }
     const isValidPassword = await req.user.verifyPassword(req.body.currentPassword)
     if (!isValidPassword) {
-      return res.status(400).send("Current password is not correct");
+      return res.status(400).json({messsage: "Current password is not correct"});
     }
     if(!validator.isStrongPassword(req.body.newPassword)){
-        return res.status(400).send("Your new password is not strong enough!")
+        return res.status(400).json({message: "Your new password is not strong enough!"})
     }
     const hashedPassword = await bcrypt.hash(req.body.newPassword, 10)
-    const updated = await User.findByIdAndUpdate(
+    await User.findByIdAndUpdate(
       { _id: loggedInUser._id },
       { password: hashedPassword },
       { returnDocument: "after", runValidators: "true" }
     );
-    res.send("Password changed successfully!");
+    return res.json({message: "Password changed successfully!"});
   } catch (err) {
-    res.status(500).send("Password change unsuccessful" + err);
+    res.status(500).json({error: "Password change unsuccessful" + err});
   }
 
 });
