@@ -4,6 +4,9 @@ const bcrypt = require('bcrypt')
 const validator = require('validator')
 const {userAuth} = require('../middlewares/Auth.js')
 const Redis = require('redis')
+const dotenv = require('dotenv')
+
+dotenv.config();
 
 
 const express = require('express')

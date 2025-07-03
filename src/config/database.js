@@ -1,7 +1,11 @@
-const moongose = require('mongoose')
+const mongoose = require('mongoose')
+const dotenv = require('dotenv')
+
+dotenv.config();
+
 
 const initializeDB = async () => {
-    await moongose.connect(
+    await mongoose.connect(
         process.env.DATABASE_CLUSTER_LINK
     )
 }
