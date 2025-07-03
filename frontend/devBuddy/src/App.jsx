@@ -1,15 +1,18 @@
-import { useState } from 'react'
+
+import Navbar from './components/Navbar'
 
 
 function App() {
-  const [count, setCount] = useState(0)
+
 
   return (
     <>
-      <div>
-        Time to build devBuddy
-      </div>
+    <Navbar/>
+    <div className='bg-red-200'>
+      Fuck it 
+    </div>
     </>
+    
   )
 }
 
