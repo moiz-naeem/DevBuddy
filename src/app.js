@@ -7,6 +7,8 @@ const authRouter = require('./routers/authRouter.js')
 const profileRouter = require('./routers/profileRouter.js');
 const requestRouter = require('./routers/requestRouter.js')
 const userRouter = require('./routers/userRouter.js')
+require('dotenv').config();
+
 
 
 

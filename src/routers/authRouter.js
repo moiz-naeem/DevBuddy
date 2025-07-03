@@ -3,7 +3,7 @@ const User = require('../models/User')
 const bcrypt = require('bcrypt')
 const validator = require('validator')
 const {userAuth} = require('../middlewares/Auth.js')
-const loginLimiter = require('../utils/validation.js')
+const Redis = require('redis')
 
 
 const express = require('express')
@@ -11,9 +11,100 @@ const express = require('express')
 
 const authRouter = express.Router();
 
+const redisClient = Redis.createClient({
+  username: process.env.REDIS_USERNAME,
+  password: process.env.REDIS_PASSWORD,
+  socket: {
+        host: process.env.REDIS_HOST,
+        port: process.env.REDIS_PORT
+    }
+});
+
+redisClient.on('error', (err) => {
+  console.error('Redis Client Error:', err);
+});
+
+
+redisClient.connect();
+
+const createRateLimit = (windowMs, maxAttempts, keyPrefix) => {
+  return async (req, res, next) => {
+    try {
+      const identifier = req.ip || req.connection.remoteAddress;
+      const key = `${keyPrefix}:${identifier}`;
+      
+      const current = await redisClient.get(key);
+      
+      if (current === null) {
+        await redisClient.setEx(key, Math.ceil(windowMs / 1000), '1');
+        return next();
+      } else if (parseInt(current) < maxAttempts) {
+        await redisClient.incr(key);
+        return next();
+      } else {
+        const ttl = await redisClient.ttl(key);
+        return res.status(429).json({
+          error: "Too many login attempts. Please try again later.",
+          retryAfter: ttl > 0 ? ttl : Math.ceil(windowMs / 1000)
+        });
+      }
+    } catch (error) {
+      console.error('Rate limiter error:', error);
+      return next();
+    }
+  };
+};
+
+const checkAccountLockout = async (email) => {
+  const lockoutKey = `lockout:${email}`;
+  const attempts = await redisClient.get(lockoutKey);
+  
+  if (attempts && parseInt(attempts) >= 5) {
+    const ttl = await redisClient.ttl(lockoutKey);
+    return {
+      locked: true,
+      retryAfter: ttl > 0 ? ttl : 300 
+    };
+  }
+  
+  return { locked: false };
+};
+
+const recordFailedAttempt = async (email) => {
+  const lockoutKey = `lockout:${email}`;
+  const current = await redisClient.get(lockoutKey);
+  
+  if (current === null) {
+    await redisClient.setEx(lockoutKey, 300, 1);
+  } else {
+    await redisClient.incr(lockoutKey);
+  }
+};
+
+const clearFailedAttempts = async (email) => {
+  const lockoutKey = `lockout:${email}`;
+  await redisClient.del(lockoutKey);
+};
+
+
+const loginRateLimit = createRateLimit(15 * 60 * 1000, 10, 'login_attempts');
+
+
 //check if there is any active session before signing up new user
 authRouter.post("/signup",  async (req, res) => {
   try{
+    if (req.cookies.authToken) {
+      
+      res.cookie("authToken", "", {
+        expires: new Date(0), 
+        httpOnly: true,
+        secure: true, 
+        sameSite: "strict",
+      });
+      return res
+        .status(400)
+        .json({message: "You can not sign up while already logged in. A session was already active. The user has been logged out. Please try logging in again."});
+    }
     const containNecessaryFields =  checkValidBody(req.body, ["firstName", "lastName", "email", "password"]) 
     if(!containNecessaryFields){
       throw new Error("We only need firstName, lastName, email and password")
@@ -38,7 +129,7 @@ authRouter.post("/signup",  async (req, res) => {
 
 
 //if someone is already logged in check if it is the same user as the one loggin in if true then tell them you are already logged in
-authRouter.post("/login",  async (req, res) => {
+authRouter.post("/login", loginRateLimit,  async (req, res) => {
   try{
     const{email, password} = req.body;
 
@@ -59,6 +150,14 @@ authRouter.post("/login",  async (req, res) => {
     if(!validator.isEmail(email) || !password || (password.trim().length === 0) ){
       return res.status(400).json({error: "Invalid input. Please provide a valid email and password."})
     }
+
+    const lockoutStatus = await checkAccountLockout(email);
+    if (lockoutStatus.locked) {
+      return res.status(423).json({
+        error: "Account temporarily locked due to too many failed attempts. Please try again later.",
+        retryAfter: lockoutStatus.retryAfter
+      });
+    }
     
     const user =  await User.findOne({email : email});
     if(!user){
@@ -71,13 +170,21 @@ authRouter.post("/login",  async (req, res) => {
 
     }
 
+    await clearFailedAttempts(email);
+
     const token = await user.getJWT();
     res.cookie("authToken", token, {
       httpOnly: true,
       sameSite: "strict",
       expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
     });
-    return res.send("Login Successfull");
+    return res.json({ 
+      message: "Login successful",
+      user: {
+        id: user._id,
+        email: user.email,
+      }
+    })
 
   }
   catch(err){
