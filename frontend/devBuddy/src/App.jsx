@@ -1,19 +1,44 @@
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
 
-import Navbar from './components/Navbar'
+import Body from './components/Body'
 
 
 function App() {
 
 
   return (
-    <>
-    <Navbar/>
-    <div className='bg-red-200'>
-      Fuck it 
-    </div>
-    </>
-    
-  )
+    <BrowserRouter basename='/'>
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <>
+              <Body />
+            </>
+          }
+        />
+        <Route
+          path="/login"
+          element={
+            <>
+              <Body />
+              <div>Login here</div>
+            </>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <>
+              <Body />
+              <div>Your profile</div>
+            </>
+          }
+        />
+      </Routes>
+    </BrowserRouter>
+  );
+
 }
 
 export default App
