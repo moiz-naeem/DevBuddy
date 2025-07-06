@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 
 import Body from './components/Body'
+import Login from './components/Login';
 
 
 function App() {
@@ -22,7 +23,7 @@ function App() {
           element={
             <>
               <Body />
-              <div>Login here</div>
+              <Login/>
             </>
           }
         />
