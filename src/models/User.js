@@ -76,7 +76,7 @@ const userSchema = new mongoose.Schema(
     photourl: {
       type: String,
       default:
-        "https://static.vecteezy.com/system/resources/thumbnails/048/334/475/small_2x/a-person-icon-on-a-transparent-background-png.png",
+        "https://www.kindpng.com/picc/m/773-7733095_kisspng-monkey-hippopotamus-rhinoceros-clip-art-cute-clip.png",
     },
   },
   { timestamps: true }

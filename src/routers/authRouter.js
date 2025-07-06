@@ -91,7 +91,7 @@ const clearFailedAttempts = async (email) => {
 };
 
 
-const loginRateLimit = createRateLimit(15 * 60 * 1000, 10, 'login_attempts');
+const loginRateLimit = createRateLimit(5 * 60 * 1000, 10, 'login_attempts');
 
 
 //check if there is any active session before signing up new user
@@ -133,7 +133,9 @@ authRouter.post("/signup",  async (req, res) => {
 
 
 //if someone is already logged in check if it is the same user as the one loggin in if true then tell them you are already logged in
-authRouter.post("/login", loginRateLimit,  async (req, res) => {
+// authRouter.post("/login", loginRateLimit,  async (req, res) => {
+
+authRouter.post("/login",  async (req, res) => {
   try{
     const{email, password} = req.body;
 
@@ -155,13 +157,13 @@ authRouter.post("/login", loginRateLimit,  async (req, res) => {
       return res.status(400).json({error: "Invalid input. Please provide a valid email and password."})
     }
 
-    const lockoutStatus = await checkAccountLockout(email);
-    if (lockoutStatus.locked) {
-      return res.status(423).json({
-        error: "Account temporarily locked due to too many failed attempts. Please try again later.",
-        retryAfter: lockoutStatus.retryAfter
-      });
-    }
+    // const lockoutStatus = await checkAccountLockout(email);
+    // if (lockoutStatus.locked) {
+    //   return res.status(423).json({
+    //     error: "Account temporarily locked due to too many failed attempts. Please try again later.",
+    //     retryAfter: lockoutStatus.retryAfter
+    //   });
+    // }
     
     const user =  await User.findOne({email : email});
     if(!user){
@@ -174,7 +176,7 @@ authRouter.post("/login", loginRateLimit,  async (req, res) => {
 
     }
 
-    await clearFailedAttempts(email);
+    // await clearFailedAttempts(email);
 
     const token = await user.getJWT();
     res.cookie("authToken", token, {
@@ -184,10 +186,7 @@ authRouter.post("/login", loginRateLimit,  async (req, res) => {
     });
     return res.json({ 
       message: "Login successful",
-      user: {
-        id: user._id,
-        email: user.email,
-      }
+      data: user
     })
 
   }

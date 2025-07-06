@@ -1,11 +1,16 @@
+import { useSelector } from "react-redux";
 function Navbar(){
+    const user = useSelector((store) => store.user.data)
+
   return (
     <div className="navbar bg-base-300 shadow-sm">
       <div className="flex-1 ">
         <a className="btn btn-ghost text-xl bg-base-100">daisyUI</a>
       </div>
-      <div className="flex gap-2">
-        
+      {user && (
+        <div className="flex gap-2">
+        {    console.log("user :" + user.firstName)}
+        <div> Welcome {user.firstName} </div>
         <div className="dropdown dropdown-end mx-10">
           <div
             tabIndex={0}
@@ -37,7 +42,7 @@ function Navbar(){
             </li>
           </ul>
         </div>
-      </div>
+      </div> ) }
     </div>
   );
 };

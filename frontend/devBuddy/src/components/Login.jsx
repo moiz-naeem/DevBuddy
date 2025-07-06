@@ -1,19 +1,35 @@
 import axios from "axios";
 import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { addUser, removeUser } from "../../utils/userSlice";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("elon@gmail.com");
+  const [password, setPassword] = useState("Idontknowman2@");
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
 
-  const handleLoginForm = (formData) => {
-    axios.post(
+  const handleLoginForm = async (formData) => {
+    try{
+
+       const res = await axios.post(
       "http://localhost:6969/login",
       { email, password },
       { withCredentials: true }
-    );
+       );
+       console.log(res.data)
+        dispatch(addUser(res.data))
+        return navigate('/')
+
+
+    }catch(err){
+        console.log(err.message)
+    }
   };
 
   return (
+    
     <div className="flex justify-center mt-10">
       <div className="card bg-neutral text-primary-content w-96 ">
         <div className="card-body">
