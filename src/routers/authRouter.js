@@ -6,7 +6,7 @@ const {userAuth} = require('../middlewares/Auth.js')
 const Redis = require('redis')
 const dotenv = require('dotenv')
 
-dotenv.config({ path: './src/.env' }); 
+dotenv.config({ path: '././.env' }); 
 
 
 

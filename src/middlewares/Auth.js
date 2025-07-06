@@ -3,7 +3,7 @@ const User = require("../models/User");
 
 const dotenv = require('dotenv')
 
-dotenv.config({ path: './src/.env' });
+dotenv.config({ path: '../../.env' });
 
 const userAuth = async (req, res, next) => {
   try {

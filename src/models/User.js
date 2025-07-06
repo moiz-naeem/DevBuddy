@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken')
 const validator = require('validator')
 const dotenv = require('dotenv')
 
-dotenv.config({ path: './src/.env' }); 
+dotenv.config({ path: '././.env' }); 
 
 
 const userSchema = new mongoose.Schema(
