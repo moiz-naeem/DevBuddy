@@ -4,6 +4,9 @@ import Body from './components/Body'
 import Login from './components/Login';
 import { Provider } from 'react-redux';
 import userStore from '../utils/reduxStore';
+import Feed from './components/Feed';
+import Signup from './components/Signup';
+import Profile from './components/Profile';
 
 
 function App() {
@@ -12,33 +15,17 @@ function App() {
   return (
     <Provider store={userStore}>
       <BrowserRouter basename='/'>
-      <Routes>
-        <Route
-          path="/"
-          element={         
-              <Body />
-          }
-        />
-        <Route
-          path="/login"
-          element={
-            <>
-              <Body />
-              <Login/>
-            </>
-          }
-        />
-        <Route
-          path="/profile"
-          element={
-            <>
-              <Body />
-              <div>Your profile</div>
-            </>
-          }
-        />
-      </Routes>
-    </BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Body />}>  
+            <Route path="/" element={<Feed />}/>  
+            <Route path="/login" element={<Login />}/>  
+            <Route path="/signup" element={<Signup />}/>  
+            <Route path="/profile" element={<Profile />}/>             
+          </Route>
+           
+        </Routes>
+        
+      </BrowserRouter>
     </Provider>
   );
 
