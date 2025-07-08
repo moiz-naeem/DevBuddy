@@ -1,5 +1,7 @@
+
 const Feed = () => {
-    return (
+    
+    return(
         <>
         FEEd
         </>

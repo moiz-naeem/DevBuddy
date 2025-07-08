@@ -2,6 +2,7 @@ import { useSelector } from "react-redux";
 function Navbar(){
     const user = useSelector((store) => store?.user)
 
+
   return (
     <div className="navbar bg-base-300 shadow-sm">
       <div className="flex-1 ">
@@ -9,7 +10,7 @@ function Navbar(){
       </div>
       {user && (
         <div className="flex gap-2">
-        <div> Welcome {user?.data.firstName} </div>
+        <div> Welcome {user?.data?.firstName} </div>
         <div className="dropdown dropdown-end mx-10">
           <div
             tabIndex={0}
