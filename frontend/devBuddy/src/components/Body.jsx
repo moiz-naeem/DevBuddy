@@ -18,6 +18,10 @@ const Body = () => {
       setIsLoading(true);
       const response = await axios.get("http://localhost:6969/profile/view", {
         withCredentials: true,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        timeout: 5000 
       });
       dispatch(addUser(response.data));
     } catch (err) {
