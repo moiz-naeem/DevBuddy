@@ -5,9 +5,10 @@ import { addUser } from "../../utils/userSlice";
 import { useLocation, useNavigate } from "react-router-dom";
 import Alert from "./Alert";
 
+
 const Login = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("elon@gmail.com");
+  const [password, setPassword] = useState("Idontknowman2@");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   
