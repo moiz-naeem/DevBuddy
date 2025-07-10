@@ -8,6 +8,7 @@ import Feed from './components/Feed';
 import Signup from './components/Signup';
 import Profile from './components/Profile';
 import ProtectedRoute from './components/ProtectedRoute';
+import Access from './components/Access';
 
 function App() {
   return (
@@ -32,7 +33,7 @@ function App() {
               }
             />
             
-            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Access />} />
             <Route path="/signup" element={<Signup />} />
           </Route>
         </Routes>
