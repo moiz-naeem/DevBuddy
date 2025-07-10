@@ -2,7 +2,6 @@
 
 
 const Alert = ({message, status}) => {
-  console.log(message, status)
 
   return (
     <div className="w-auto mb-4 pr-7 pl-2 ">

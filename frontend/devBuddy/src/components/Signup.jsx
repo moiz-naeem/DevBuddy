@@ -56,7 +56,6 @@ const Signup = () => {
 
       setIsLoading(false);
     } catch (err) {
-      console.log(err.response.data)
       setResponse({...err.response.data});
       setIsLoading(false);
     }
