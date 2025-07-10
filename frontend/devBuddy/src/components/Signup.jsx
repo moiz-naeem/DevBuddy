@@ -10,7 +10,7 @@ const Signup = () => {
   const [password, setPassword] = useState("Idontknowman2@");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [response, setResponse] = useState("");
+  const [response, setResponse] = useState({});
 
   const signUpSchema = Yup.object({
     firstName: Yup.string()
@@ -51,11 +51,13 @@ const Signup = () => {
       const res = await axios.post("http://localhost:6969/signup", payload, {
         withCredentials: true,
       });
-      setResponse(res.data.message);
+      console.log("res.data"+ res.data)
+      setResponse(res.data);
 
       setIsLoading(false);
     } catch (err) {
-      setResponse(err?.response?.data || "Sign Up failed. Try again");
+      console.log(err.response.data)
+      setResponse({...err.response.data});
       setIsLoading(false);
     }
   };
@@ -66,8 +68,8 @@ const Signup = () => {
     // <div className="card-body">
     <div>
     {
-      response &&  <div className="pl-2 mt-2 jsutify-centre">
-        <Alert message={response} news={"good"} />
+      Object.keys(response).length > 0 &&  <div className="pl-2 mt-2 jsutify-centre">
+        <Alert {...response} />
         </div>
 
     }

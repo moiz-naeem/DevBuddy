@@ -93,7 +93,7 @@ const Login = () => {
         // <div className="card-body">
         <div>
           {!!error && 
-          <Alert message= {error} news={"bad"}/>}
+          <Alert message ={error} status = {"fail"}/>}
           
           {/* <h2 className="card-title flex justify-center">Login</h2> */}
           

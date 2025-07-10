@@ -1,18 +1,18 @@
 
 
 
-const Alert = ({ response, news }) => {
-
+const Alert = ({message, status}) => {
+  console.log(message, status)
 
   return (
     <div className="w-auto mb-4 pr-7 pl-2 ">
       <div
         role="alert"
         className={`alert ${
-          news === "bad" ? "alert-error" : "alert-success"
+          status === "fail" ? "alert-error" : "alert-success"
         }  `}
       >
-        {news === "bad" ? (
+        {status === "fail" ? (
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="h-6 w-6 shrink-0 stroke-current"
@@ -42,7 +42,7 @@ const Alert = ({ response, news }) => {
           </svg>
         )}
 
-        <span>{response}</span>
+        <span>{message}</span>
       </div>
     </div>
   );

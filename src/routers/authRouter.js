@@ -106,11 +106,11 @@ authRouter.post("/signup",  async (req, res) => {
       });
       return res
         .status(400)
-        .json({message: "You can not sign up while already logged in. A session was already active. The user has been logged out. Please try logging in again."});
+        .json({message: "You can not sign up while already logged in. A session was already active. The user has been logged out. Please try logging in again.", status: "fail"});
     }
     const containNecessaryFields =  checkValidBody(req.body, ["firstName", "lastName", "email", "password"]) 
     if(!containNecessaryFields){
-      throw new Error("We only need firstName, lastName, email and password")
+      return res.status(400).json({message: "We only need firstName, lastName, email and password ", status: "fail"});
     }
     const{firstName, lastName, email, password} = req.body;
     validateSignUpData(req)
@@ -123,9 +123,9 @@ authRouter.post("/signup",  async (req, res) => {
     });
 
     await user.save();
-    return res.json({message : `Registered successfully!`})
+    return res.json({message : `Registered successfully!`, status: "pass"})
   }catch(error){
-    return res.status(400).json({message: "User registration unsuccessful " + error});
+    return res.status(400).json({message: "User registration unsuccessful ", status: "fail"});
   }
   
 })

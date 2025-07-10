@@ -4,15 +4,13 @@ const rateLimit = require('express-rate-limit');
 const validateSignUpData = (req) => {
   const { firstName, lastName, email, password } = req.body;
   if (!firstName || !lastName) {
-    throw new Error("Name is not valid");
+    return res.status(400).json({message: "Name is not valid", status: "fail"});;
   } else if (!validator.isEmail(email)) {
-    throw new Error("Email is not valid");
+    return res.status(400).json({message: "Email is not valid ", status: "fail"});
   } else if (!validator.isStrongPassword(password)) {
-    throw new Error(
-      "Password is not strong enough please include lowercase, uppercase, number and special character and make sure length greater than seven"
-    );
+    return res.status(400).json({message: "Password must be at least 8 characters long and include one uppercase, one lowercase, one number, and one special character. ", status: "fail"});
   }else if(password.length < 8 || password.length > 50 ){
-    throw new Error("The password length range is 8-50 characters")
+    return res.status(400).json({message: "The password length range is 8-50 characters ", status: "fail"});
   }
 };
 
