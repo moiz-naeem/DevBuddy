@@ -23,7 +23,7 @@ export const fetchUser = async () => {
     } catch (err) {
       console.log(err)
       const errorMessage = err?.response?.data || "Please log in first.";
-      return {response: errorMessage, status: response?.response?.status}
+      return {response: errorMessage, status: err?.response?.status}
       
     } 
   };

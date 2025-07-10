@@ -3,21 +3,28 @@ import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { removeUser } from "../../utils/userSlice";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 function Navbar(){
     const user = useSelector((store) => store?.user)
     const dispatch = useDispatch()
     const navigate = useNavigate()
+    const [isLoading, setIsLoading] = useState(false)
 
     const handleSignOut = async () => {
+        setIsLoading(true)
         try{
-            await axios.post("http://localhost:6969/logout", {}, {withCredentials: true})
-            dispatch(removeUser())
-            return navigate("/login")
+          
+          await axios.post("http://localhost:6969/logout", {}, {withCredentials: true})
+          dispatch(removeUser())
+          setIsLoading(false)
+          return navigate("/login")
+          
 
 
 
         }catch(err){
             const errorMessage = err?.response?.data || "An error occurred while logging out. Try again";
+            setIsLoading(false)
             navigate("/", { state: { error: errorMessage }, replace: true });
 
         }

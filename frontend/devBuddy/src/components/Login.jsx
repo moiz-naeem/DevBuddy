@@ -53,7 +53,7 @@ const Login = () => {
 
     try {
       setIsLoading(true);
-      setError(""); // Clear previous errors
+      setError("");
       
       const res = await axios.post(
         "http://localhost:6969/login",
@@ -75,46 +75,48 @@ const Login = () => {
   }
 
   return (
-    <div className="flex justify-center mt-10">
-      <div className="card bg-neutral text-primary-content w-96">
-        <div className="card-body">
-          {error && <Alert error={error} />}
+    // <div className="flex justify-center mt-10">
+    //   <div className="card bg-neutral text-primary-content w-96">
+        // <div className="card-body">
+        <div>
+          {error && 
+          <Alert error={error} />}
           
-          <h2 className="card-title flex justify-center">Login</h2>
+          {/* <h2 className="card-title flex justify-center">Login</h2> */}
           
           <form onSubmit={handleLoginForm}>
             <fieldset className="fieldset">
-              <legend className="fieldset-legend">Email</legend>
+              <legend className="fieldset-legend ml-2">Email</legend>
               <input
                 type="email"
-                className="input"
+                className="input ml-2"
                 placeholder="email@email.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 disabled={isLoading}
               />
-              <p className="label">Required</p>
+              <p className="label ml-2">Required</p>
             </fieldset>
             
             <fieldset className="fieldset">
-              <legend className="fieldset-legend">Password</legend>
+              <legend className="fieldset-legend ml-2">Password</legend>
               <input
                 type="password"
-                className="input"
+                className="input ml-2"
                 placeholder="Enter your password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 disabled={isLoading}
               />
-              <p className="label">Required</p>
+              <p className="label ml-2">Required</p>
             </fieldset>
             
-            <div className="card-actions flex justify-center">
+            <div className="card-actions flex justify-center ">
               <button
                 type="submit"
-                className="btn bg-primary btn-md"
+                className="btn bg-primary btn-md rounded-md w-1/3"
                 disabled={isLoading}
               >
                 {isLoading ? (
@@ -126,8 +128,9 @@ const Login = () => {
             </div>
           </form>
         </div>
-      </div>
-    </div>
+
+    //   </div>
+    // </div>
   );
 };
 

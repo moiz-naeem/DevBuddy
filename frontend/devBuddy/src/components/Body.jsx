@@ -24,7 +24,7 @@ useEffect(() => {
       if (data.status === 200) {
         dispatch(addUser(data.response));
       } else {
-        navigate("/login", { state: { error: data.response }, replace: true });
+        navigate("/register", { state: { error: data.response }, replace: true });
       }
     }
     setIsLoading(false);
