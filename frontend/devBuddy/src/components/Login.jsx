@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { addUser } from "../../utils/userSlice";
 import { useLocation, useNavigate } from "react-router-dom";
 import Alert from "./Alert";
+import * as Yup from "yup";
 
 
 const Login = () => {
@@ -27,6 +28,13 @@ const Login = () => {
     }
   }, [location.state, navigate, location.pathname]);
 
+  useEffect(() => {
+    if (!location.state?.error) {
+      setError("");
+    }
+  }, []);
+
+
 
   useEffect(() => {
     if (user) {
@@ -34,27 +42,31 @@ const Login = () => {
     }
   }, [user, navigate]);
 
-  const validateForm = () => {
-    if (!email || !password) {
-      setError("Email and password are required");
-      return false;
-    }
-    if (!/\S+@\S+\.\S+/.test(email)) {
-      setError("Please enter a valid email address");
-      return false;
-    }
-    return true;
-  };
+  const loginSchema = Yup.object({
+      email: Yup.string()
+        .email("Invalid email")
+        .required("Email is required")
+        .lowercase("Email should be in lowercase"),
+      password: Yup.string()
+        .required("Password is required")
+        .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\w\s]).{8,}$/, {
+          message:
+            "Password must be 8+ characters with uppercase, lowercase, number & special character.",
+          excludeEmptyString: true,
+        }),
+    });
 
   const handleLoginForm = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
     
-    if (!validateForm()) return;
 
     try {
-      setIsLoading(true);
       setError("");
-      
+      const payload = { email, password };
+
+      await loginSchema.validate(payload)
+
       const res = await axios.post(
         "http://localhost:6969/login",
         { email, password },
@@ -64,7 +76,8 @@ const Login = () => {
       dispatch(addUser(res.data));
       navigate("/", { replace: true });
     } catch (err) {
-      setError(err?.response?.data || "Login failed. Please try again.");
+      console.log(err)
+      setError(err?.response?.data || err.message || "Login failed. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -79,8 +92,8 @@ const Login = () => {
     //   <div className="card bg-neutral text-primary-content w-96">
         // <div className="card-body">
         <div>
-          {error && 
-          <Alert error={error} />}
+          {!!error && 
+          <Alert message= {error} news={"bad"}/>}
           
           {/* <h2 className="card-title flex justify-center">Login</h2> */}
           

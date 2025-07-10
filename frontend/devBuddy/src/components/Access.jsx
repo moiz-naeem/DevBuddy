@@ -9,7 +9,7 @@ const Access = () => {
     <div className="flex justify-center mt-10">
       <div className="card bg-neutral text-primary-content w-100">
         <div className="card-body">
-          <div className="fieldset join flex justify-center w-auto pr-7 pt-4 pl-2">
+          <div className={`fieldset join flex justify-center w-auto  pt-4 ${!!isLogin && "pl-2 pr-7" }`}>
             <button
               className={`btn join-item w-1/2 rounded-md ${
                 !isLogin ? "bg-primary text-white" : "bg-gray-400"

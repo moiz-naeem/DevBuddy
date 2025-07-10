@@ -1,11 +1,13 @@
 import { useState } from "react";
 import * as Yup from "yup";
+import axios from "axios";
+import Alert from "./Alert";
 
 const Signup = () => {
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [firstName, setFirstName] = useState("Jim");
+  const [lastName, setLastName] = useState("Simons");
+  const [email, setEmail] = useState("jim@gmail.com");
+  const [password, setPassword] = useState("Idontknowman2@");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [response, setResponse] = useState("");
@@ -36,107 +38,113 @@ const Signup = () => {
 
   const handleSignUpForm = async (e) => {
     e.preventDefault();
-    const payload = { firstName, lastName, password, email };
-    const isValidPayload = await signUpSchema.validate(payload);
-    if (!isValidPayload) return;
+    console.log("Inside handler")
+    setIsLoading(true);
+    
+
     try {
-      setIsLoading(true);
+      const payload = { firstName, lastName, password, email };
       setError("");
+      console.log(payload)
+      await signUpSchema.validate(payload);
+      
       const res = await axios.post("http://localhost:6969/signup", payload, {
         withCredentials: true,
       });
-      setResponse(res.data);
+      setResponse(res.data.message);
+
+      setIsLoading(false);
     } catch (err) {
-      setError(err?.response?.data || "Sign Up failed. Try again");
+      setResponse(err?.response?.data || "Sign Up failed. Try again");
+      setIsLoading(false);
     }
   };
-  if (response) {
-    return <>Sign Up Successful!</>;
-  }
 
   return (
     // <div className="flex justify-center mt-10">
     //       <div className="card bg-neutral text-primary-content w-96">
     // <div className="card-body">
+    <div>
+    {
+      response &&  <div className="pl-2 mt-2 jsutify-centre">
+        <Alert message={response} news={"good"} />
+        </div>
+
+    }
     <form onSubmit={handleSignUpForm} className="max-w-xl mx-auto space-y-4">
+      <div className="flex gap-4 w-full">
+        <fieldset className="w-1/2">
+          <legend className="fieldset-legend">First Name</legend>
+          <input
+            type="text"
+            className="input input-bordered w-full"
+            placeholder="Jim"
+            value={firstName}
+            onChange={(e) => setFirstName(e.target.value)}
+            required
+            disabled={isLoading}
+          />
+          <p className="label">Required</p>
+        </fieldset>
 
-  <div className="flex gap-4 w-full">
-    <fieldset className="w-1/2">
-      <legend className="fieldset-legend">First Name</legend>
-      <input
-        type="text"
-        className="input input-bordered w-full"
-        placeholder="Jim"
-        value={firstName}
-        onChange={(e) => setFirstName(e.target.value)}
-        required
-        disabled={isLoading}
-      />
-      <p className="label">Required</p>
-    </fieldset>
+        <fieldset className="w-1/2">
+          <legend className="fieldset-legend">Last Name</legend>
+          <input
+            type="text"
+            className="input input-bordered w-full"
+            placeholder="Simons"
+            value={lastName}
+            onChange={(e) => setLastName(e.target.value)}
+            required
+            disabled={isLoading}
+          />
+          <p className="label">Required</p>
+        </fieldset>
+      </div>
 
-    <fieldset className="w-1/2">
-      <legend className="fieldset-legend">Last Name</legend>
-      <input
-        type="text"
-        className="input input-bordered w-full"
-        placeholder="Simons"
-        value={lastName}
-        onChange={(e) => setLastName(e.target.value)}
-        required
-        disabled={isLoading}
-      />
-      <p className="label">Required</p>
-    </fieldset>
-  </div>
+      <fieldset className="w-full">
+        <legend className="fieldset-legend">Email</legend>
+        <input
+          type="email"
+          className="input input-bordered w-full"
+          placeholder="email@email.com"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+          disabled={isLoading}
+        />
+        <p className="label">Required</p>
+      </fieldset>
 
+      <fieldset className="w-full">
+        <legend className="fieldset-legend">Password</legend>
+        <input
+          type="password"
+          className="input input-bordered w-full"
+          placeholder="Enter your password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+          disabled={isLoading}
+        />
+        <p className="label">Required</p>
+      </fieldset>
 
-  <fieldset className="w-full">
-    <legend className="fieldset-legend">Email</legend>
-    <input
-      type="email"
-      className="input input-bordered w-full"
-      placeholder="email@email.com"
-      value={email}
-      onChange={(e) => setEmail(e.target.value)}
-      required
-      disabled={isLoading}
-    />
-    <p className="label">Required</p>
-  </fieldset>
-
-
-  <fieldset className="w-full">
-    <legend className="fieldset-legend">Password</legend>
-    <input
-      type="password"
-      className="input input-bordered w-full"
-      placeholder="Enter your password"
-      value={password}
-      onChange={(e) => setPassword(e.target.value)}
-      required
-      disabled={isLoading}
-    />
-    <p className="label">Required</p>
-  </fieldset>
-
-
-  <div className="card-actions flex justify-center">
-    <button
-      type="submit"
-      className="btn bg-primary btn-md w-1/3 rounded-md"
-      disabled={isLoading}
-    >
-      {isLoading ? (
-        <span className="loading loading-spinner loading-sm"></span>
-      ) : (
-        "Sign Up"
-      )}
-    </button>
-  </div>
-</form>
-
-
+      <div className="card-actions flex justify-center">
+        <button
+          type="submit"
+          className="btn bg-primary btn-md w-1/3 rounded-md"
+          disabled={isLoading}
+        >
+          {isLoading ? (
+            <span className="loading loading-spinner loading-sm"></span>
+          ) : (
+            "Sign Up"
+          )}
+        </button>
+      </div>
+    </form>
+    </div>
   );
 };
 

@@ -33,8 +33,7 @@ function App() {
               }
             />
             
-            <Route path="/register" element={<Access />} />
-            <Route path="/signup" element={<Signup />} />
+            <Route path="/auth" element={<Access />} />
           </Route>
         </Routes>
       </BrowserRouter>

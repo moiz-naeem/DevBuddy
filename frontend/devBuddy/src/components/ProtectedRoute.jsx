@@ -9,13 +9,10 @@ const ProtectedRoute = ({ children }) => {
     
     return (
       <Navigate 
-        to="/login" 
-        state={{ 
-          error: "Please log in to access this page.",
-          from: location.pathname 
-        }} 
+        to="/auth" 
         replace 
       />
+      
     );
   }
 

@@ -12,14 +12,12 @@ const userAuth = async (req, res, next) => {
     const cookie = req.cookies;
     const { authToken } = cookie;
     if (authToken === undefined) {
-      return res.status(400).send("No valid JWt token found");
+      return res.status(400).json({message: "Error: No valid session found"});
     }
-    console.log("AuthToken found:", authToken.substring(0, 20) + "...");
-    console.log("JWT_SECRET available:", !!process.env.JWT_SECRET);
-    const { _id } = await jwt.verify(authToken, process.env.JWT_SECRET);
+    const { _id } =  jwt.verify(authToken, process.env.JWT_SECRET);
     const user = await User.findById(_id);
     if(!user){
-        return res.status(400).send("Invalid JWT token")
+        return res.status(400).json({message: "Error: No valid session found"})
     }
     req.user = user;
     console.log(user);
