@@ -9,15 +9,17 @@ const dotenv = require('dotenv');
 const cors = require('cors')
 
 
-const cookieParser = require('cookie-parser') 
-
-
-dotenv.config({ path: './.env' });
-
 app.use(cors({
-  origin: process.env.BASE_URL,
-  credentials: true
-}))
+  origin: ["http://localhost:5173", "http://127.0.0.1:5173"],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Cookie'],
+  exposedHeaders: ['Set-Cookie']
+}));
+
+dotenv.config({ path: '../.env' });
+const cookieParser = require('cookie-parser')
+
 app.use(express.json());
 app.use(cookieParser())
 

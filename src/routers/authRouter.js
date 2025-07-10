@@ -15,21 +15,21 @@ const express = require('express')
 
 const authRouter = express.Router();
 
-const redisClient = Redis.createClient({
-  username: process.env.REDIS_USERNAME,
-  password: process.env.REDIS_PASSWORD,
-  socket: {
-        host: process.env.REDIS_HOST,
-        port: process.env.REDIS_PORT
-    }
-});
+// const redisClient = Redis.createClient({
+//   username: process.env.REDIS_USERNAME,
+//   password: process.env.REDIS_PASSWORD,
+//   socket: {
+//         host: process.env.REDIS_HOST,
+//         port: process.env.REDIS_PORT
+//     }
+// });
 
-redisClient.on('error', (err) => {
-  console.error('Redis Client Error:', err);
-});
+// redisClient.on('error', (err) => {
+//   console.error('Redis Client Error:', err);
+// });
 
 
-redisClient.connect();
+// redisClient.connect();
 
 const createRateLimit = (windowMs, maxAttempts, keyPrefix) => {
   return async (req, res, next) => {
@@ -102,7 +102,6 @@ authRouter.post("/signup",  async (req, res) => {
       res.cookie("authToken", "", {
         expires: new Date(0), 
         httpOnly: true,
-        secure: true, 
         sameSite: "strict",
       });
       return res
@@ -145,7 +144,6 @@ authRouter.post("/login",  async (req, res) => {
       res.cookie("authToken", "", {
         expires: new Date(0), 
         httpOnly: true,
-        secure: true, 
         sameSite: "strict",
       });
       return res
@@ -181,9 +179,16 @@ authRouter.post("/login",  async (req, res) => {
     const token = await user.getJWT();
     res.cookie("authToken", token, {
       httpOnly: true,
-      sameSite: "strict",
+      secure: false, 
+      sameSite: "lax", 
       expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+      domain: "localhost", 
     });
+    // res.cookie("authToken", token, {
+    //   httpOnly: true,
+    //   sameSite: "strict",
+    //   expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+    // });
     return res.json({ 
       message: "Login successful",
       data: user
@@ -200,11 +205,10 @@ authRouter.post("/logout", userAuth, (req, res) => {
     res.cookie('authToken', '', { 
         expires: new Date(), 
         httpOnly: true,    
-        secure: true,   
-        sameSite: 'strict'  
+        sameSite: 'lax' //'strict'  
     });
 
-    res.status(200).send("Logout Successful!!");
+    res.status(200).json({message: "Logout Successful!!"});
 });
 
 

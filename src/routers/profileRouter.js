@@ -15,7 +15,7 @@ profileRouter.get("/profile/view", userAuth, async (req, res) =>{
     const user =  req.user;
     console.log("user " + user)
 
-    return res.json({message :"Logged in user is " +  user.firstName + " " + user.lastName})
+    return res.json({data: user})
 
   }catch(err){
     return res.status(400).json({error: "Error loading profile" + err})

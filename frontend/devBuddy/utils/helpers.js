@@ -27,3 +27,14 @@ export const fetchUser = async () => {
       
     } 
   };
+export const toLowerCaseFields = (fields) => {
+  const lowered = {};
+  for (const key in fields) {
+    if (typeof fields[key] === "string") {
+      lowered[key] = fields[key].toLowerCase();
+    } else {
+      lowered[key] = fields[key]; 
+    }
+  }
+  return lowered;
+};
