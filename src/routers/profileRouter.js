@@ -10,6 +10,13 @@ const validator = require('validator');
 
 const profileRouter = express.Router();
 
+profileRouter.use((req, res, next) => {
+  console.log(`${new Date().toISOString()} - ${req.method} ${req.path}`);
+  console.log('Headers:', req.headers);
+  console.log('Body:', req.body);
+  next();
+});
+
 profileRouter.get("/profile/view", userAuth, async (req, res) =>{
   try{
     const user =  req.user;
@@ -22,7 +29,7 @@ profileRouter.get("/profile/view", userAuth, async (req, res) =>{
   }
 })
 
-profileRouter.patch("/profile/edit/", userAuth, async (req, res) => {
+profileRouter.patch("/profile/edit", userAuth, async (req, res) => {
   const fieldsSentByUser = req.body;
   try {
     const canUpdate = checkValidBody(req.body, ["firstName", "lastName", "age", "skills", "gender", "about"]) 

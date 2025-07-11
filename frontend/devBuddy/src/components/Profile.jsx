@@ -7,14 +7,12 @@ import * as Yup from "yup";
 const Profile = () => {
   const data = useSelector((store) => store?.user?.data);
   const user = capitalizeText(data)
-  console.log(objToLowerCase(user))
-  console.log(user)
+ 
   const [firstName, setFirstName] = useState(user?.firstName);
   const [lastName, setLastName] = useState(user?.lastName);
   const [email, setEmail] = useState(user?.email);
-  const [age, setAge] = useState(user?.age) 
+  const [age, setAge] = useState(user?.age || 0) 
   const [about, setAbout] = useState(user?.about)
-  const[password, setPassword]= useState("")
   const [picture, setPicture] = useState(user?.photourl)
   const [skills, setSkills] = useState(user?.skills)
   const [error, setError] = useState("");
@@ -36,25 +34,43 @@ const Profile = () => {
           .max(200, "Stop being self centered the max length for about section is 200"),
         skills: Yup.array(Yup.string())
          .max(10, {message: "Looks like your are highly skilled but you can only add 10 skills"}),
-        photourl: Yup.string()
-        .matches(
-            /((https?):\/\/)?(www.)?[a-z0-9]+(\.[a-z]{2,}){1,3}(#?\/?[a-zA-Z0-9#]+)*\/?(\?[a-zA-Z0-9-_]+=[a-zA-Z0-9-%]+&?)?$/,
-            {message: 'Enter correct url!'}
-        )
+        picture: Yup.string().url()
+        // .matches(
+        //     /((https?):\/\/)?(www.)?[a-z0-9]+(\.[a-z]{2,}){1,3}(#?\/?[a-zA-Z0-9#]+)*\/?(\?[a-zA-Z0-9-_]+=[a-zA-Z0-9-%]+&?)?$/,
+        //     {message: 'Enter correct url!'}
+        // )
   })
 
   const handleUpdateFile = async(e) => {
     e.preventDefault();
     setIsLoading(true);
+
+    const userInput = objToLowerCase({firstName: firstName, lastName: lastName, age: age , about:about , picture:picture, skills:skills})
+
+    console.log(userInput)
+    // console.log(objToLowerCase(user))
     try{
-        SetError("")
+        setError("")
         await profileSchema.validate(user)
-        const res = await axios.post("http://localhost:6969/profile/edit", user, {withCredentials:true});
+        const res = await axios({
+            method: 'PATCH',
+            url: 'http://localhost:6969/profile/edit',
+            data: userInput,
+            withCredentials: true,
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+            },
+            timeout: 3000
+        });
+        console.log(res)
+        setResponse(res)
 
 
 
     }catch(err){
-        setError({...(err.response.data ||err.message)} )
+        console.log(err)
+        setError({...(err?.response?.data || err?.message || "Something went wrong. Profile updation unsuccessful")} )
 
     }finally{
         setIsLoading(false)
@@ -64,7 +80,7 @@ const Profile = () => {
   return (
     <div>
       <form
-        onSubmit={() => console.log("Profile form")}
+        onSubmit={handleUpdateFile}
         className="max-w-xl mx-auto space-y-4"
       >
         <div className="flex gap-4 w-full">
@@ -131,6 +147,7 @@ const Profile = () => {
             required
             disabled={isLoading}
           />
+           <p className="label">Required</p>
         </fieldset>
 
         <fieldset className="w-full">
