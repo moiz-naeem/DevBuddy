@@ -14,7 +14,6 @@ export const fetchUser = async () => {
         },
         timeout: 2000,
       });
-      console.log(response);
       return {response: response.data, status: response?.status};
 
     } catch (err) {
@@ -34,3 +33,59 @@ export const toLowerCaseFields = (fields) => {
   }
   return lowered;
 };
+
+
+export const capitalizeText = (obj) => {
+  if (!obj || typeof obj !== "object") return {};
+
+  const capitalize = (text) => {
+    if (!text || typeof text !== "string") return text;
+
+    text = text.trim();
+
+    if (!/[.!?]/.test(text)) {
+      return text.charAt(0).toUpperCase() + text.slice(1);
+    }
+
+    return text.replace(/(^\s*\w|[.!?]\s*\w)/g, match => match.toUpperCase());
+  };
+
+  const updatedObj = {};
+
+  for (const key in obj) {
+    if (Object.hasOwn(obj, key)) {
+      const value = obj[key];
+      updatedObj[key] = typeof value === "string" ? capitalize(value) : value;
+    }
+  }
+
+  return updatedObj;
+};
+
+export const objToLowerCase = (obj) => {
+  if (!obj || typeof obj !== "object") return {};
+
+  const lowercase = (text) => {
+    if (!text || typeof text !== "string") return text;
+
+    text = text.trim();
+
+    if (!/[.!?]/.test(text)) {
+      return text.charAt(0).toLowerCase() + text.slice(1);
+    }
+
+    return text.replace(/(^\s*\w|[.!?]\s*\w)/g, match => match.toLowerCase());
+  };
+
+  const updatedObj = {};
+
+  for (const key in obj) {
+    if (Object.hasOwn(obj, key)) {
+      const value = obj[key];
+      updatedObj[key] = typeof value === "string" ? lowercase(value) : value;
+    }
+  }
+
+  return updatedObj;
+};
+
