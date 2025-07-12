@@ -32,7 +32,7 @@ profileRouter.get("/profile/view", userAuth, async (req, res) =>{
 profileRouter.patch("/profile/edit", userAuth, async (req, res) => {
   const fieldsSentByUser = req.body;
   try {
-    const canUpdate = checkValidBody(req.body, ["firstName", "lastName", "age", "skills", "gender", "about"]) 
+    const canUpdate = checkValidBody(req.body, ["firstName", "lastName", "age", "skills", "gender", "about", "photourl"]) 
     if (!canUpdate) {
       throw new Error(
         "Only Following fields can be updated: firstName, lastName, age, skills, gender"
@@ -56,7 +56,7 @@ profileRouter.patch("/profile/edit", userAuth, async (req, res) => {
     );
     return res.json({message: `Profile updated successfully`});
   } catch (error) {
-    res.status(400).json({message: error});
+    res.status(400).json({message: error.message});
   }
 });
 
