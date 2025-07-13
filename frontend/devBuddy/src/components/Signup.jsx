@@ -2,6 +2,7 @@ import { useState } from "react";
 import * as Yup from "yup";
 import axios from "axios";
 import Alert from "./Alert";
+import { passwordRegex } from "../../utils/helpers";
 
 const Signup = () => {
   const [firstName, setFirstName] = useState("Jim");
@@ -29,7 +30,7 @@ const Signup = () => {
       .lowercase("Email should be in lowercase"),
     password: Yup.string()
       .required("Password is required")
-      .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\w\s]).{8,}$/, {
+      .matches(passwordRegex, {
         message:
           "Password must be at least 8 characters long and include one uppercase, one lowercase, one number, and one special character.",
         excludeEmptyString: true,
@@ -53,7 +54,7 @@ const Signup = () => {
 
       setIsLoading(false);
     } catch (err) {
-      setResponse({...err.response.data});
+      setResponse({...err?.response?.data || err.message() || "Registration unsuccessful"});
       setIsLoading(false);
     }
   };

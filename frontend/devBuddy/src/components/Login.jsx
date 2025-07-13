@@ -5,6 +5,7 @@ import { addUser } from "../../utils/userSlice";
 import { useLocation, useNavigate } from "react-router-dom";
 import Alert from "./Alert";
 import * as Yup from "yup";
+import { passwordRegex } from "../../utils/helpers";
 
 
 const Login = () => {
@@ -49,7 +50,7 @@ const Login = () => {
         .lowercase("Email should be in lowercase"),
       password: Yup.string()
         .required("Password is required")
-        .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\w\s]).{8,}$/, {
+        .matches(passwordRegex, {
           message:
             "Password must be 8+ characters with uppercase, lowercase, number & special character.",
           excludeEmptyString: true,

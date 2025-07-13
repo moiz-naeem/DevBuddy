@@ -181,7 +181,6 @@ const Profile = () => {
               value={firstName}
               onChange={(e) => {
                 setFirstName(e.target.value);
-                setHasChanges(false);
               }}
               required
               disabled={isLoading}
@@ -197,7 +196,6 @@ const Profile = () => {
               value={lastName}
               onChange={(e) => {
                 setLastName(e.target.value);
-                setHasChanges(false);
               }}
               required
               disabled={isLoading}
