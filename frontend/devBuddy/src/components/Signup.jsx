@@ -38,20 +38,17 @@ const Signup = () => {
 
   const handleSignUpForm = async (e) => {
     e.preventDefault();
-    console.log("Inside handler")
     setIsLoading(true);
     
 
     try {
       const payload = { firstName, lastName, password, email };
       setError("");
-      console.log(payload)
       await signUpSchema.validate(payload);
       
       const res = await axios.post("http://localhost:6969/signup", payload, {
         withCredentials: true,
       });
-      console.log("res.data"+ res.data)
       setResponse(res.data);
 
       setIsLoading(false);
