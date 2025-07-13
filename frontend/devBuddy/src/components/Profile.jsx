@@ -6,15 +6,17 @@ import * as Yup from "yup";
 import Dropdown from "./Dropdown";
 import { skillOptions } from "../../utils/helpers";
 import Selected from "./Selected";
-import { useFormChanges } from "../hooks";
+import { useFormChanges } from "../../hooks/useFormChanges";
 import { getChangedFields } from "../../utils/helpers";
 import { normalizeValue } from "../../utils/helpers";
+import { useDispatch } from "react-redux";
+import { addUser } from "../../utils/userSlice";
 
 
 const Profile = () => {
   const data = useSelector((store) => store?.user?.data);
   const caseSensitiveData = useSelector((store) => store?.user?.caseSensitiveData);
-
+  const dispatch = useDispatch()
   const user = capitalizeText(data);
 
   const [firstName, setFirstName] = useState(user?.firstName);
@@ -28,7 +30,6 @@ const Profile = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [response, setResponse] = useState({});
   const [labels, setLabels] = useState([])
-  const [hasChanges, setHasChanges] = useState(true)
 
   const normalizedInitial = useMemo(() => ({
     firstName: normalizeValue(user?.firstName || ""),
@@ -48,7 +49,9 @@ const Profile = () => {
     skills: normalizeValue(skills),
   }), [firstName, lastName, age, about, picture, skills]);
 
-  const hasFormChanged = useFormChanges(normalizedInitial, normalizedCurrent);
+  const [hasFormChanged, resetInitial] = useFormChanges(normalizedInitial, normalizedCurrent);
+
+
 
   
 
@@ -85,7 +88,11 @@ const Profile = () => {
   const handleUpdateFile = async (e) => {
     e.preventDefault();
     setIsLoading(true);
+    try {
+    if(!hasFormChanged){
+      throw new Error("Can not update profile without changing anything")
 
+    }
 
     const userInput = objToLowerCase({
       firstName: firstName,
@@ -99,7 +106,7 @@ const Profile = () => {
      
 
      console.log(userInput)
-    try {
+ 
       setError("");
       await profileSchema.validate(userInput);
       const currentUserData  = {...data, ...caseSensitiveData}
@@ -124,6 +131,8 @@ const Profile = () => {
             timeout: 1000
         });
         console.log(res)
+        resetInitial(normalizedCurrent)
+        dispatch(addUser(normalizedCurrent))
         setResponse(res)
       
     } catch (err) {

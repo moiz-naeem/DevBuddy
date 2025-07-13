@@ -9,6 +9,7 @@ import Signup from "./components/Signup";
 import Profile from "./components/Profile";
 import ProtectedRoute from "./components/ProtectedRoute";
 import TabbedForm from "./components/TabbedForm";
+import Password from "./components/Password";
 
 function App() {
   return (
@@ -29,6 +30,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <Profile />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/ass"
+              element={
+                <ProtectedRoute>
+                  <Password />
                 </ProtectedRoute>
               }
             />

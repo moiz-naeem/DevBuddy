@@ -1,8 +1,0 @@
-import { useRef, useMemo } from "react";
-export const useFormChanges = (initialValues, currentValues) => {
-  const initialRef = useRef(JSON.stringify(initialValues));
-  
-  return useMemo(() => {
-    return JSON.stringify(currentValues) !== initialRef.current;
-  }, [currentValues]);
-};
