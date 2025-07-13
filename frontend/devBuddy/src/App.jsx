@@ -28,13 +28,17 @@ function App() {
             <Route
               path="/profile"
               element={
-                <ProtectedRoute>
-                  <Profile />
-                </ProtectedRoute>
+                <TabbedForm
+                  primaryComponent={Profile} 
+                  secondaryComponent={Password}
+                  primaryLabel="Update profile"
+                  secondaryLabel="Change password"
+                  size = "large"
+                />
               }
             />
             <Route
-              path="/ass"
+              path="/pass"
               element={
                 <ProtectedRoute>
                   <Password />
@@ -50,6 +54,7 @@ function App() {
                   secondaryComponent={Signup}
                   primaryLabel="Login"
                   secondaryLabel="Sign Up"
+                  size = "medium"
                 />
               }
             />

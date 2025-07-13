@@ -131,7 +131,7 @@ const Signup = () => {
       <div className="card-actions flex justify-center">
         <button
           type="submit"
-          className="btn bg-primary btn-md w-1/3 rounded-md"
+          className="btn bg-primary text-white px-6 py-2 self-center mx-auto min-w-fit"
           disabled={isLoading}
         >
           {isLoading ? (

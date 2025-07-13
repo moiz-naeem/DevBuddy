@@ -196,7 +196,8 @@ authRouter.post("/login",  async (req, res) => {
     // });
     return res.json({ 
       message: "Login successful",
-      data: user
+      data: {firstName: user.firstName, lastName: user.lastName, about: user.about, age: user.age},
+                     caseSensitiveData: {skills: user.skills, photourl: user.photourl, email:user.email}
     })
 
   }

@@ -12,11 +12,12 @@ import { normalizeValue } from "../../utils/helpers";
 import { useDispatch } from "react-redux";
 import { addUser } from "../../utils/userSlice";
 
-
 const Profile = () => {
   const data = useSelector((store) => store?.user?.data);
-  const caseSensitiveData = useSelector((store) => store?.user?.caseSensitiveData);
-  const dispatch = useDispatch()
+  const caseSensitiveData = useSelector(
+    (store) => store?.user?.caseSensitiveData
+  );
+  const dispatch = useDispatch();
   const user = capitalizeText(data);
 
   const [firstName, setFirstName] = useState(user?.firstName);
@@ -29,31 +30,36 @@ const Profile = () => {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [response, setResponse] = useState({});
-  const [labels, setLabels] = useState([])
+  const [labels, setLabels] = useState([]);
 
-  const normalizedInitial = useMemo(() => ({
-    firstName: normalizeValue(user?.firstName || ""),
-    lastName: normalizeValue(user?.lastName || ""),
-    age: user?.age || 0,
-    about: normalizeValue(user?.about || ""),
-    picture: normalizeValue(caseSensitiveData?.photourl || ""),
-    skills: normalizeValue(caseSensitiveData?.skills || []),
-  }), [user, caseSensitiveData]);
+  const normalizedInitial = useMemo(
+    () => ({
+      firstName: normalizeValue(user?.firstName || ""),
+      lastName: normalizeValue(user?.lastName || ""),
+      age: user?.age || 0,
+      about: normalizeValue(user?.about || ""),
+      picture: normalizeValue(caseSensitiveData?.photourl || ""),
+      skills: normalizeValue(caseSensitiveData?.skills || []),
+    }),
+    [user, caseSensitiveData]
+  );
 
-  const normalizedCurrent = useMemo(() => ({
-    firstName: normalizeValue(firstName),
-    lastName: normalizeValue(lastName),
-    age: age,
-    about: normalizeValue(about),
-    picture: normalizeValue(picture),
-    skills: normalizeValue(skills),
-  }), [firstName, lastName, age, about, picture, skills]);
+  const normalizedCurrent = useMemo(
+    () => ({
+      firstName: normalizeValue(firstName),
+      lastName: normalizeValue(lastName),
+      age: age,
+      about: normalizeValue(about),
+      picture: normalizeValue(picture),
+      skills: normalizeValue(skills),
+    }),
+    [firstName, lastName, age, about, picture, skills]
+  );
 
-  const [hasFormChanged, resetInitial] = useFormChanges(normalizedInitial, normalizedCurrent);
-
-
-
-  
+  const [hasFormChanged, resetInitial] = useFormChanges(
+    normalizedInitial,
+    normalizedCurrent
+  );
 
   const profileSchema = Yup.object({
     firstName: Yup.string()
@@ -69,7 +75,16 @@ const Profile = () => {
       200,
       "Stop being self centered the max length for about section is 200"
     ),
-    skills: Yup.array(Yup.object({id: Yup.number().min(1, {message: "Skill id can not be 0 or negative"}).required(), label: Yup.string().max(200, "No skills has length greater or equal to 200").required()})).max(10, {
+    skills: Yup.array(
+      Yup.object({
+        id: Yup.number()
+          .min(1, { message: "Skill id can not be 0 or negative" })
+          .required(),
+        label: Yup.string()
+          .max(200, "No skills has length greater or equal to 200")
+          .required(),
+      })
+    ).max(10, {
       message:
         "Looks like your are highly skilled but you can only add 10 skills",
     }),
@@ -83,60 +98,67 @@ const Profile = () => {
     const alreadySelected = skills.some((s) => s.id === skill.id);
     if (alreadySelected) return;
     setSkills([...skills, skill]);
-
   };
   const handleUpdateFile = async (e) => {
     e.preventDefault();
     setIsLoading(true);
     try {
-    if(!hasFormChanged){
-      throw new Error("Can not update profile without changing anything")
+      if (!hasFormChanged) {
+        throw new Error("Can not update profile without changing anything");
+      }
 
-    }
+      const userInput = objToLowerCase({
+        firstName: firstName,
+        lastName: lastName,
+        age: age,
+        about: about,
+        photourl: picture,
+        skills: skills,
+      });
 
-    const userInput = objToLowerCase({
-      firstName: firstName,
-      lastName: lastName,
-      age: age,
-      about: about,
-      photourl: picture,
-      skills: skills,
-    });
-    
-     
+      console.log(userInput);
 
-     console.log(userInput)
- 
       setError("");
       await profileSchema.validate(userInput);
-      const currentUserData  = {...data, ...caseSensitiveData}
-      const changes  = getChangedFields(currentUserData, userInput)
-      console.log("Sending patch request with body = " )
-      console.log(changes)
+      const currentUserData = { ...data, ...caseSensitiveData };
+      const changes = getChangedFields(currentUserData, userInput);
+      console.log("Sending patch request with body = ");
+      console.log(changes);
 
-
-      
       if (Object.keys(changes).length === 0) {
         throw new Error("To update profile you need to change something");
-        }
+      }
       const res = await axios({
-            method: 'PATCH',
-            url: 'http://localhost:6969/profile/edit',
-            data: changes,
-            withCredentials: true,
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-            },
-            timeout: 1000
-        });
-        console.log(res)
-        resetInitial(normalizedCurrent)
-        dispatch(addUser(normalizedCurrent))
-        setResponse(res)
-      
+        method: "PATCH",
+        url: "http://localhost:6969/profile/edit",
+        data: changes,
+        withCredentials: true,
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        timeout: 1000,
+      });
+      console.log(res);
+      resetInitial(normalizedCurrent);
+      dispatch(
+        addUser({
+          data: {
+            firstName: normalizedCurrent.firstName,
+            lastName: normalizedCurrent.lastName,
+            about: normalizedCurrent.about,
+            age: normalizedCurrent.age,
+          },
+          caseSensitiveData: {
+            skills: normalizedCurrent.skills,
+            photourl: normalizedCurrent.picture,
+            email: user.email,
+          },
+        })
+      );
+      setResponse(res);
     } catch (err) {
-      console.log(err)
+      console.log(err);
       setError({
         ...(err?.response?.data ||
           err?.message ||
@@ -157,8 +179,10 @@ const Profile = () => {
               className="input input-bordered w-full"
               placeholder="Jim"
               value={firstName}
-              onChange={(e) => {setFirstName(e.target.value)
-                 setHasChanges(false)} }
+              onChange={(e) => {
+                setFirstName(e.target.value);
+                setHasChanges(false);
+              }}
               required
               disabled={isLoading}
             />
@@ -171,9 +195,10 @@ const Profile = () => {
               className="input input-bordered w-full"
               placeholder="Simons"
               value={lastName}
-              onChange={(e) => {setLastName(e.target.value)
-                setHasChanges(false)}
-              }
+              onChange={(e) => {
+                setLastName(e.target.value);
+                setHasChanges(false);
+              }}
               required
               disabled={isLoading}
             />
@@ -199,8 +224,7 @@ const Profile = () => {
             className="input input-bordered w-full"
             placeholder="Enter your password"
             value={about}
-            onChange={(e) => setAbout(e.target.value)
-            }
+            onChange={(e) => setAbout(e.target.value)}
             required
             disabled={isLoading}
           />
@@ -213,7 +237,6 @@ const Profile = () => {
             className="input input-bordered w-full"
             value={age}
             onChange={(e) => setAge(e.target.value)}
-            
             required
             disabled={isLoading}
           />
@@ -241,7 +264,7 @@ const Profile = () => {
             className="input input-bordered w-full"
             value={picture}
             placeholder="https://www.google.com/"
-            onChange={(e) => setPicture(e.target.value)  }
+            onChange={(e) => setPicture(e.target.value)}
             required
             disabled={isLoading}
           />

@@ -102,7 +102,7 @@ const Login = () => {
               <legend className="fieldset-legend ml-2">Email</legend>
               <input
                 type="email"
-                className="input ml-2"
+                className="input ml-2 w-full"
                 placeholder="email@email.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -116,7 +116,7 @@ const Login = () => {
               <legend className="fieldset-legend ml-2">Password</legend>
               <input
                 type="password"
-                className="input ml-2"
+                className="input ml-2 w-full"
                 placeholder="Enter your password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -129,7 +129,7 @@ const Login = () => {
             <div className="card-actions flex justify-center ">
               <button
                 type="submit"
-                className="btn bg-primary btn-md rounded-md w-1/3"
+                className="btn bg-primary text-white px-6 py-2 self-center mx-auto min-w-fit"
                 disabled={isLoading}
               >
                 {isLoading ? (

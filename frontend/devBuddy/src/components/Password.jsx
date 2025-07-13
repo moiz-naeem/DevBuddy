@@ -1,6 +1,9 @@
 import { useSelector } from "react-redux";
+import { useState } from "react";
 const Password = () =>{
     const user = useSelector((store) => store?.user);
+    const [error, setError] = useState("")
+    const [isLoading, setIsLoading] = useState(false)
 
     return (
         <div>
@@ -9,14 +12,14 @@ const Password = () =>{
                   
                   {/* <h2 className="card-title flex justify-center">Login</h2> */}
                   
-                  <form onSubmit={handleLoginForm}>
+                  <form onSubmit={()=> console.log("Form submitted")}>
                     <fieldset className="fieldset">
                       <legend className="fieldset-legend ml-2">Email</legend>
                       <input
                         type="email"
-                        className="input ml-2"
+                        className="input ml-2 w-full"
                         placeholder="email@email.com"
-                        value={email}
+                        value={"hello"}
                         onChange={(e) => setEmail(e.target.value)}
                         required
                         disabled={isLoading}
@@ -28,9 +31,9 @@ const Password = () =>{
                       <legend className="fieldset-legend ml-2">Password</legend>
                       <input
                         type="password"
-                        className="input ml-2"
+                        className="input ml-2 w-full"
                         placeholder="Enter your password"
-                        value={password}
+                        value={"Password"}
                         onChange={(e) => setPassword(e.target.value)}
                         required
                         disabled={isLoading}

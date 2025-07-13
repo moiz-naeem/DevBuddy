@@ -1,35 +1,46 @@
 import { useState } from "react";
-import Login from "./Login";
-import Signup from "./Signup";
 
 
-const TabbedForm = ({primaryComponent: Primary, secondaryComponent: Secondary , primaryLabel, secondaryLabel}) => {
+const TabbedForm = ({
+  primaryComponent: Primary,
+  secondaryComponent: Secondary,
+  primaryLabel,
+  secondaryLabel,
+  size,
+}) => {
   const [isPrimaryComponent, setIsPrimaryComponent] = useState(true);
+
+  const sizeClassMap = {
+    small: "w-[22rem]",
+    medium: "w-[28rem]",
+    large: "w-[32rem]",
+  };
 
   return (
     <div className="flex justify-center mt-10">
-      <div className="card bg-neutral text-primary-content w-100">
+      <div
+        className={`card bg-neutral text-primary-content ${sizeClassMap[size]}`}
+      >
         <div className="card-body">
-          <div className={`fieldset join flex justify-center w-auto  pt-4 ${!!isPrimaryComponent && "pl-2 pr-7" }`}>
+          <div className="flex justify-center gap-x-2 pt-4 mb-4">
             <button
-              className={`btn join-item w-1/2 rounded-md ${
-                !isPrimaryComponent ? "bg-primary text-white" : "bg-gray-400"
+              className={`btn flex-1 rounded-md px-6 py-2 text-center ${
+                !isPrimaryComponent ? "bg-primary text-white" : "bg-gray-500"
               }`}
               onClick={() => setIsPrimaryComponent(false)}
             >
-              {console.log(secondaryLabel)}
               {secondaryLabel}
             </button>
             <button
-              className={`btn join-item w-1/2 rounded-md ${
-                isPrimaryComponent ? "bg-primary text-white" : "bg-gray-400"
+              className={`btn flex-1 rounded-md px-6 py-2 text-center ${
+                isPrimaryComponent ? "bg-primary text-white" : "bg-gray-500"
               }`}
               onClick={() => setIsPrimaryComponent(true)}
             >
-             {primaryLabel}
+              {primaryLabel}
             </button>
           </div>
-          {isPrimaryComponent ? <Primary/> : <Secondary/>}
+          {isPrimaryComponent ? <Primary /> : <Secondary />}
         </div>
       </div>
     </div>

@@ -4,7 +4,7 @@ const Selected  =( {titles, state}) => {
     
     return (
       <div className="flex flex-wrap w-full">
-        {titles.map((skill, index) => (
+        {titles?.map((skill, index) => (
             <div key= {skill.id} className=" flex basis-1/6 bg-gray-800 p-2 m-1 text-center rounded justify-between items-center">
               
               {skill.label}
