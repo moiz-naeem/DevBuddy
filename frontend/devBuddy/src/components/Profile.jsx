@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useSelector } from "react-redux";
 import { capitalizeText, objToLowerCase } from "../../utils/helpers";
 import axios from "axios";
@@ -6,7 +6,11 @@ import * as Yup from "yup";
 import Dropdown from "./Dropdown";
 import { skillOptions } from "../../utils/helpers";
 import Selected from "./Selected";
+import { useFormChanges } from "../hooks";
 import { getChangedFields } from "../../utils/helpers";
+import { normalizeValue } from "../../utils/helpers";
+
+
 const Profile = () => {
   const data = useSelector((store) => store?.user?.data);
   const caseSensitiveData = useSelector((store) => store?.user?.caseSensitiveData);
@@ -26,7 +30,27 @@ const Profile = () => {
   const [labels, setLabels] = useState([])
   const [hasChanges, setHasChanges] = useState(true)
 
-  const currentUserData  = {...data, ...caseSensitiveData}
+  const normalizedInitial = useMemo(() => ({
+    firstName: normalizeValue(user?.firstName || ""),
+    lastName: normalizeValue(user?.lastName || ""),
+    age: user?.age || 0,
+    about: normalizeValue(user?.about || ""),
+    picture: normalizeValue(caseSensitiveData?.photourl || ""),
+    skills: normalizeValue(caseSensitiveData?.skills || []),
+  }), [user, caseSensitiveData]);
+
+  const normalizedCurrent = useMemo(() => ({
+    firstName: normalizeValue(firstName),
+    lastName: normalizeValue(lastName),
+    age: age,
+    about: normalizeValue(about),
+    picture: normalizeValue(picture),
+    skills: normalizeValue(skills),
+  }), [firstName, lastName, age, about, picture, skills]);
+
+  const hasFormChanged = useFormChanges(normalizedInitial, normalizedCurrent);
+
+  
 
   const profileSchema = Yup.object({
     firstName: Yup.string()
@@ -78,16 +102,17 @@ const Profile = () => {
     try {
       setError("");
       await profileSchema.validate(userInput);
+      const currentUserData  = {...data, ...caseSensitiveData}
       const changes  = getChangedFields(currentUserData, userInput)
       console.log("Sending patch request with body = " )
       console.log(changes)
 
 
-      {
-        if (Object.keys(changes).length === 0) {
-         throw new Error("To update profile you need to change something");
+      
+      if (Object.keys(changes).length === 0) {
+        throw new Error("To update profile you need to change something");
         }
-        const res = await axios({
+      const res = await axios({
             method: 'PATCH',
             url: 'http://localhost:6969/profile/edit',
             data: changes,
@@ -100,7 +125,7 @@ const Profile = () => {
         });
         console.log(res)
         setResponse(res)
-      }
+      
     } catch (err) {
       console.log(err)
       setError({
@@ -165,8 +190,7 @@ const Profile = () => {
             className="input input-bordered w-full"
             placeholder="Enter your password"
             value={about}
-            onChange={(e) => {setAbout(e.target.value)
-              setHasChanges(false)}
+            onChange={(e) => setAbout(e.target.value)
             }
             required
             disabled={isLoading}
@@ -179,9 +203,8 @@ const Profile = () => {
             type="number"
             className="input input-bordered w-full"
             value={age}
-            onChange={(e) => {setAge(e.target.value)
-              setHasChanges(false)}
-            }
+            onChange={(e) => setAge(e.target.value)}
+            
             required
             disabled={isLoading}
           />
@@ -209,9 +232,7 @@ const Profile = () => {
             className="input input-bordered w-full"
             value={picture}
             placeholder="https://www.google.com/"
-            onChange={(e) => {setPicture(e.target.value)
-              setIsLoading(true)}
-            }
+            onChange={(e) => setPicture(e.target.value)  }
             required
             disabled={isLoading}
           />
@@ -221,7 +242,7 @@ const Profile = () => {
           <button
             type="submit"
             className="btn bg-primary btn-md w-1/3 rounded-md"
-            disabled={isLoading || hasChanges}
+            disabled={isLoading || !hasFormChanged}
           >
             {isLoading ? (
               <span className="loading loading-spinner loading-sm"></span>

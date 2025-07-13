@@ -77,6 +77,19 @@ export const objToLowerCase = (obj) => {
 
   return updatedObj;
 };
+export const normalizeValue = (val) => {
+  if (typeof val === "string") return val.trim().toLowerCase();
+  if (Array.isArray(val)) {
+    if (val.length > 0 && typeof val[0] === "object") {
+      return [...val]
+        .map((item) => ({
+          id: item.id,
+          label: item.label.trim().toLowerCase(),
+        }))
+        .sort((a, b) => a.id - b.id); // Sort by id for stable comparison
+    }
+};
+}
 
 
 export function getChangedFields(original, updated) {
