@@ -40,22 +40,21 @@ const Signup = () => {
   const handleSignUpForm = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    
+    setResponse("")
 
     try {
       const payload = { firstName, lastName, password, email };
       setError("");
       await signUpSchema.validate(payload);
-      
       const res = await axios.post("http://localhost:6969/signup", payload, {
         withCredentials: true,
       });
       setResponse(res.data);
 
-      setIsLoading(false);
     } catch (err) {
-      setResponse({...err?.response?.data || err.message() || "Registration unsuccessful"});
-      setIsLoading(false);
+      setResponse({...err?.response?.data || err.message || "Registration unsuccessful"});
+    }finally{
+      setIsLoading(false)
     }
   };
 
@@ -64,11 +63,7 @@ const Signup = () => {
     //       <div className="card bg-neutral text-primary-content w-96">
     // <div className="card-body">
     <div>
-    {
-      Object.keys(response).length > 0 &&  <div className="pl-2 mt-2 jsutify-centre">
-        <Alert {...response} />
-        </div>
-
+    {response.message && <Alert message={response.message} status={response.status} />
     }
     <form onSubmit={handleSignUpForm} className="max-w-xl mx-auto space-y-4">
       <div className="flex gap-4 w-full">

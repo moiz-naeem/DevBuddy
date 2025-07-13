@@ -3,14 +3,14 @@ import { useState } from "react";
 import * as Yup from "yup";
 import axios from "axios";
 import { passwordRegex } from "../../utils/helpers";
+import Alert from "./Alert";
 const Password = () => {
   const user = useSelector((store) => store?.user);
-  const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
-  const [response, setResponse] = useState("");
+  const [alert, setAlert] = useState({ message: "", status: "" }); 
   const [touched, setTouched] = useState({
     currentPassword: false,
     confirmNewPassword: false,
@@ -51,8 +51,8 @@ const Password = () => {
   const handlePasswordForm = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    setError("");
-    setResponse("");
+    setAlert({ message: "", status: "" })
+    
     try {
       console.log(currentPassword, newPassword, confirmNewPassword);
       await passwordSchema.validate({
@@ -66,19 +66,17 @@ const Password = () => {
         { currentPassword, newPassword },
         { withCredentials: true }
       );
-      setResponse(res.data);
-      console.log(res.data);
+      setAlert({ message: "Password updated successfully", status: "success" });
 
       setCurrentPassword("");
       setNewPassword("");
       setConfirmNewPassword("");
+      setTouched({ currentPassword: false, confirmNewPassword: false });
     } catch (err) {
-      setError(
-        err?.message || err?.response?.data || "Password update unsuccessfull"
-      );
-      console.log(
-        err.message || err?.response?.data || "Password update  unsuccessfull"
-      );
+      setAlert({
+  message: err?.message || err?.response?.data || "Password update unsuccessful",
+  status: "fail",
+});
     } finally {
       setIsLoading(false);
     }
@@ -86,10 +84,7 @@ const Password = () => {
 
   return (
     <div>
-      {/* {!!error && 
-                  <Alert message ={error} status = {"fail"}/>} */}
-
-      {/* <h2 className="card-title flex justify-center">Login</h2> */}
+      {alert.message && <Alert message={alert.message} status={alert.status} />}
 
       <form onSubmit={handlePasswordForm}>
         <fieldset className="fieldset">

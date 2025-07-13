@@ -70,9 +70,9 @@ profileRouter.patch("/profile/password", userAuth, async (req, res) => {
       "newPassword",
     ]);
     if (!isValidBody) {
-      return res.status(400).send(
-        "Only current and new password should be included in the body"
-      );
+      return res.status(400).json({
+        message: "Only current and new password should be included in the body"
+    });
     }
     const isValidPassword = await req.user.verifyPassword(req.body.currentPassword)
     if (!isValidPassword) {
@@ -89,7 +89,7 @@ profileRouter.patch("/profile/password", userAuth, async (req, res) => {
     );
     return res.json({message: "Password changed successfully!"});
   } catch (err) {
-    res.status(500).json({error: "Password change unsuccessful" + err});
+    res.status(400).json({message: "Password change unsuccessful" + err});
   }
 
 });
