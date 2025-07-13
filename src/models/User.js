@@ -1,11 +1,10 @@
 const mongoose = require("mongoose");
-const bcrypt = require('bcrypt')
-const jwt = require('jsonwebtoken')
-const validator = require('validator')
-const dotenv = require('dotenv')
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const validator = require("validator");
+const dotenv = require("dotenv");
 
-dotenv.config({ path: '././.env' }); 
-
+dotenv.config({ path: "././.env" });
 
 const userSchema = new mongoose.Schema(
   {
@@ -33,23 +32,25 @@ const userSchema = new mongoose.Schema(
       trim: true,
       maxLength: [100, `Why such a long email it exceeds max length of 100`],
       validate: {
-        validator: function(value) {
-            if(!validator.isEmail(value)){
-                throw new Error("Invalid email address " +  value)
-            }
-        }
-      }
+        validator: function (value) {
+          if (!validator.isEmail(value)) {
+            throw new Error("Invalid email address " + value);
+          }
+        },
+      },
     },
     password: {
       type: String,
       required: [true, "Can not continue without password"],
-      validate :{
-        validator: function(value) {
-            if(!validator.isStrongPassword(value)){
-                throw new Error("Password is not strong enough make sure to include lowercase, uppercase, number and a special character")
-            }
-        }
-      }
+      validate: {
+        validator: function (value) {
+          if (!validator.isStrongPassword(value)) {
+            throw new Error(
+              "Password is not strong enough make sure to include lowercase, uppercase, number and a special character"
+            );
+          }
+        },
+      },
     },
     age: { type: Number, min: [12, "Minimum age to register is 12"] },
     about: {
@@ -62,12 +63,17 @@ const userSchema = new mongoose.Schema(
       ],
       default: "Too lazy to ad something about myself",
     },
-    skills: { type: [String] },
+    skills: [
+      {
+        id: { type: Number, required: true },
+        label: { type: String, required: true },
+      },
+    ],
     gender: {
       type: String,
       lowercase: true,
       validate: {
-        validator: function(value) {
+        validator: function (value) {
           return ["male", "female", "others"].includes(value);
         },
         message: "Gender must be one of the following: male, female, or others",
@@ -82,16 +88,18 @@ const userSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-userSchema.methods.getJWT = async function (){
+userSchema.methods.getJWT = async function () {
   const user = this;
-  const jwtToken = await jwt.sign({_id : user._id}, process.env.JWT_SECRET, {expiresIn : '7d'}) 
-  return jwtToken
-}
+  const jwtToken = await jwt.sign({ _id: user._id }, process.env.JWT_SECRET, {
+    expiresIn: "7d",
+  });
+  return jwtToken;
+};
 
-userSchema.methods.verifyPassword = async function (plainPassword){
+userSchema.methods.verifyPassword = async function (plainPassword) {
   const user = this;
-  const isValid = await bcrypt.compare(plainPassword, user.password)
+  const isValid = await bcrypt.compare(plainPassword, user.password);
   return isValid;
-}
+};
 
 module.exports = mongoose.model("User", userSchema);

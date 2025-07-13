@@ -22,7 +22,8 @@ profileRouter.get("/profile/view", userAuth, async (req, res) =>{
     const user =  req.user;
     console.log("user " + user)
 
-    return res.json({data: user})
+    return res.json({data: {firstName: user.firstName, lastName: user.lastName, about: user.about, age: user.age},
+                     caseSensitiveData: {skills: user.skills, photourl: user.photourl, email:user.email} })
 
   }catch(err){
     return res.status(400).json({error: "Error loading profile" + err})
@@ -31,6 +32,7 @@ profileRouter.get("/profile/view", userAuth, async (req, res) =>{
 
 profileRouter.patch("/profile/edit", userAuth, async (req, res) => {
   const fieldsSentByUser = req.body;
+  console.log(fieldsSentByUser)
   try {
     const canUpdate = checkValidBody(req.body, ["firstName", "lastName", "age", "skills", "gender", "about", "photourl"]) 
     if (!canUpdate) {
