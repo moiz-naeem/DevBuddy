@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { capitalizeText, objToLowerCase } from "../../utils/helpers";
 import axios from "axios";
@@ -30,7 +30,7 @@ const Profile = () => {
   const [skills, setSkills] = useState(caseSensitiveData?.skills);
   const [isLoading, setIsLoading] = useState(false);
   const [alert, setAlert] = useState({ message: "", status: "" }); 
-  const alertMessage = alert.message;
+
 
   const normalizedInitial = useMemo(
     () => ({
@@ -60,7 +60,11 @@ const Profile = () => {
     normalizedInitial,
     normalizedCurrent
   );
-
+  console.log("initial")
+  console.dir(normalizedInitial, {depth: null});
+  console.log("current")
+  console.dir(normalizedCurrent, {depth: null});
+  console.log("has form changes " + hasFormChanged )
   const profileSchema = Yup.object({
     firstName: Yup.string()
       .min(3, { message: "Minimum length for first name is 3" })
@@ -141,22 +145,25 @@ const Profile = () => {
         timeout: 1000,
       });
       console.log(res);
-      resetInitial(normalizedCurrent);
       dispatch(
         addUser({
           data: {
+            ...data,
             firstName: normalizedCurrent.firstName,
             lastName: normalizedCurrent.lastName,
             about: normalizedCurrent.about,
-            age: normalizedCurrent.age,
+            age: parseInt(age),
           },
           caseSensitiveData: {
+            ...caseSensitiveData,
             skills: normalizedCurrent.skills,
             photourl: normalizedCurrent.picture,
             email: user.email,
           },
         })
       );
+      resetInitial(normalizedCurrent);
+
       setAlert({message: res.data.message, status: res.data.status});
     } catch (err) {
       console.log(err);

@@ -83,19 +83,18 @@ export const normalizeValue = (val) => {
     if (val.length > 0 && typeof val[0] === "object") {
       return [...val].sort((a, b) => a.id - b.id);
     }
+    return val; 
+  }
+  return val;
 };
-}
-
 
 export function getChangedFields(original, updated) {
   const changes = {};
   for (const key in updated) {
-    console.log("Original:" + original[key])
-    console.log("Updated:" + updated[key])
 
     if (JSON.stringify(original[key]) !== JSON.stringify(updated[key])) {
       changes[key] = updated[key];
-      console.log("Changes: "+ changes[key])
+
       
     }
   }
