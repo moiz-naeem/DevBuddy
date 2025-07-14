@@ -23,7 +23,7 @@ const userAuth = async (req, res, next) => {
     console.log(user);
     next();
   } catch (err) {
-    return res.status(500).send("Error durinf user authentication" + err);
+    return res.status(400).send("Error durinf user authentication" + err);
   }
 };
 

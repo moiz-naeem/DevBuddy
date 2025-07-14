@@ -11,6 +11,7 @@ import { getChangedFields } from "../../utils/helpers";
 import { normalizeValue } from "../../utils/helpers";
 import { useDispatch } from "react-redux";
 import { addUser } from "../../utils/userSlice";
+import Alert from "./Alert";
 
 const Profile = () => {
   const data = useSelector((store) => store?.user?.data);
@@ -27,10 +28,9 @@ const Profile = () => {
   const [about, setAbout] = useState(user?.about);
   const [picture, setPicture] = useState(caseSensitiveData?.photourl);
   const [skills, setSkills] = useState(caseSensitiveData?.skills);
-  const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [response, setResponse] = useState({});
-  const [labels, setLabels] = useState([]);
+  const [alert, setAlert] = useState({ message: "", status: "" }); 
+  const alertMessage = alert.message;
 
   const normalizedInitial = useMemo(
     () => ({
@@ -102,6 +102,7 @@ const Profile = () => {
   const handleUpdateFile = async (e) => {
     e.preventDefault();
     setIsLoading(true);
+    setAlert({ message: "", status: "" })
     try {
       if (!hasFormChanged) {
         throw new Error("Can not update profile without changing anything");
@@ -118,7 +119,7 @@ const Profile = () => {
 
       console.log(userInput);
 
-      setError("");
+
       await profileSchema.validate(userInput);
       const currentUserData = { ...data, ...caseSensitiveData };
       const changes = getChangedFields(currentUserData, userInput);
@@ -156,13 +157,15 @@ const Profile = () => {
           },
         })
       );
-      setResponse(res);
+      setAlert({message: res.data.message, status: res.data.status});
     } catch (err) {
       console.log(err);
-      setError({
-        ...(err?.response?.data ||
+      setAlert({
+        message: err?.response?.data?.message ||
           err?.message ||
-          "Something went wrong. Profile updation unsuccessful"),
+          "Something went wrong. Profile updation unsuccessful",
+        status: "fail"
+
       });
     } finally {
       setIsLoading(false);
@@ -170,6 +173,8 @@ const Profile = () => {
   };
   return (
     <div>
+      
+      {alert.message && <Alert message={alert.message} status={alert.status}/>}
       <form onSubmit={handleUpdateFile} className="max-w-xl mx-auto space-y-4">
         <div className="flex gap-4 w-full">
           <fieldset className="w-1/2">
@@ -272,7 +277,7 @@ const Profile = () => {
           <button
             type="submit"
             className="btn bg-primary btn-md w-1/3 rounded-md"
-            disabled={isLoading || !hasFormChanged}
+            disabled={isLoading || !hasFormChanged }
           >
             {isLoading ? (
               <span className="loading loading-spinner loading-sm"></span>

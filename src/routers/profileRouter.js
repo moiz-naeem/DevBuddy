@@ -56,9 +56,9 @@ profileRouter.patch("/profile/edit", userAuth, async (req, res) => {
       fieldsSentByUser,
       { returnDocument: "after", runValidators: "true" }
     );
-    return res.json({message: `Profile updated successfully`});
+    return res.json({message: `Profile updated successfully`, status: "pass"});
   } catch (error) {
-    res.status(400).json({message: error.message});
+    res.status(400).json({message: error.message, status:"fail"});
   }
 });
 
@@ -71,15 +71,18 @@ profileRouter.patch("/profile/password", userAuth, async (req, res) => {
     ]);
     if (!isValidBody) {
       return res.status(400).json({
-        message: "Only current and new password should be included in the body"
+        message: "Only current and new password should be included in the body",
+        status: "fail"
     });
     }
     const isValidPassword = await req.user.verifyPassword(req.body.currentPassword)
     if (!isValidPassword) {
-      return res.status(400).json({messsage: "Current password is not correct"});
+      return res.status(400).json({message: "Current password is not correct" ,
+        status: "fail"});
     }
     if(!validator.isStrongPassword(req.body.newPassword)){
-        return res.status(400).json({message: "Your new password is not strong enough!"})
+        return res.status(400).json({message: "Your new password is not strong enough!",
+        status: "fail"})
     }
     const hashedPassword = await bcrypt.hash(req.body.newPassword, 10)
     await User.findByIdAndUpdate(
@@ -87,9 +90,9 @@ profileRouter.patch("/profile/password", userAuth, async (req, res) => {
       { password: hashedPassword },
       { returnDocument: "after", runValidators: "true" }
     );
-    return res.json({message: "Password changed successfully!"});
+    return res.json({message: "Password changed successfully!", status:"pass"});
   } catch (err) {
-    res.status(400).json({message: "Password change unsuccessful" + err});
+    res.status(400).json({message: "Password change unsuccessful" + err, status: "fail"});
   }
 
 });

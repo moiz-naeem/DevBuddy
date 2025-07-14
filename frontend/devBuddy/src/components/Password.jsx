@@ -10,16 +10,18 @@ const Password = () => {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
-  const [alert, setAlert] = useState({ message: "", status: "" }); 
-  const [touched, setTouched] = useState({
-    currentPassword: false,
-    confirmNewPassword: false,
-  });
+  const [alert, setAlert] = useState({ message: "", status: "" });
+  
 
-  const isStrongCurrentPassword = passwordRegex.test(currentPassword);
-  const passwordsMatch =
-    confirmNewPassword.trim().length > 0 &&
-    confirmNewPassword.trim() === newPassword.trim();
+  const isStrongCurrentPassword = currentPassword.trim().length > 0 ? passwordRegex.test(currentPassword) : true;
+  const isStrongNewPassword = newPassword.trim().length > 0 ? passwordRegex.test(newPassword) : true;
+  const passwordsMatch = confirmNewPassword.trim().length > 0 && newPassword.trim().length > 0 
+    ? confirmNewPassword.trim() === newPassword.trim() 
+    : true;
+
+  const newAndOldMatch = newPassword.trim().length > 0 && currentPassword.trim().length > 0 
+    ? newPassword.trim() === currentPassword.trim() 
+    : false;
 
   const passwordSchema = Yup.object({
     currentPassword: Yup.string()
@@ -51,8 +53,8 @@ const Password = () => {
   const handlePasswordForm = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    setAlert({ message: "", status: "" })
-    
+    setAlert({ message: "", status: "" });
+
     try {
       console.log(currentPassword, newPassword, confirmNewPassword);
       await passwordSchema.validate({
@@ -66,17 +68,17 @@ const Password = () => {
         { currentPassword, newPassword },
         { withCredentials: true }
       );
-      setAlert({ message: "Password updated successfully", status: "success" });
+      setAlert({ message: res.data.message, status: res.data.status });
 
       setCurrentPassword("");
       setNewPassword("");
       setConfirmNewPassword("");
-      setTouched({ currentPassword: false, confirmNewPassword: false });
     } catch (err) {
       setAlert({
-  message: err?.message || err?.response?.data || "Password update unsuccessful",
-  status: "fail",
-});
+        message:
+          err?.message || err?.response?.data?.message || "Password update unsuccessful",
+        status: "fail",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -94,18 +96,20 @@ const Password = () => {
             className="input ml-2 w-full"
             placeholder="Enter your current password"
             onChange={(e) => setCurrentPassword(e.target.value)}
-            onBlur={() =>
-              setTouched((prev) => ({ ...prev, currentPassword: true }))
-            }
+            
             required
             disabled={isLoading}
           />
           <p
             className={`label ml-2 ${
-             currentPassword && !isStrongCurrentPassword ? "text-red-400" : "text-white"
+              currentPassword.trim().length > 0 && !isStrongCurrentPassword
+                ? "text-red-400"
+                : "text-white"
             }`}
           >
-            {currentPassword && !isStrongCurrentPassword ? "Enter correct password" : "Required"}
+            {currentPassword && !isStrongCurrentPassword
+              ? "Password must be 8+ characters with uppercase, lowercase, number & special character"
+              : "Required"}
           </p>
         </fieldset>
 
@@ -116,11 +120,14 @@ const Password = () => {
             className="input ml-2 w-full"
             placeholder="Enter new password"
             onChange={(e) => setNewPassword(e.target.value)}
-            
             required
             disabled={isLoading}
           />
-          <p className="label ml-2">Required</p>
+          <p className={`label ml-2 ${newPassword.trim().length > 0 && !isStrongCurrentPassword || newAndOldMatch ? "text-red-400":"white" }`}>{newAndOldMatch
+              ? "New and current password cannot be the same"
+              : newPassword.trim().length > 0 && !isStrongNewPassword
+              ? "Password must be 8+ characters with uppercase, lowercase, number & special character" : "Required" }</p>
+          
         </fieldset>
 
         <fieldset className="fieldset">
@@ -130,18 +137,21 @@ const Password = () => {
             className="input ml-2 w-full"
             placeholder="Confirm your new password"
             onChange={(e) => setConfirmNewPassword(e.target.value)}
-            onBlur={() =>
-              setTouched((prev) => ({ ...prev, confirmNewPassword: true }))
-            }
             required
             disabled={isLoading}
           />
           <p
             className={`label ml-2 ${
-             confirmNewPassword && !passwordsMatch ? "text-red-400" : "text-white"
+              confirmNewPassword.trim().length > 0 && (!passwordsMatch || newAndOldMatch)
+                ? "text-red-400"
+                : "text-white"
             }`}
           >
-            {confirmNewPassword &&!passwordsMatch ? "Passwords don't match" : "Required"}
+            {confirmNewPassword.trim().length > 0 && newAndOldMatch
+              ? "New and current password cannot be the same"
+              : confirmNewPassword.trim().length > 0 && !passwordsMatch
+              ? "Passwords don't match"
+              : "Required"}
           </p>
         </fieldset>
 
@@ -149,7 +159,12 @@ const Password = () => {
           <button
             type="submit"
             className="btn bg-primary btn-md rounded-md w-1/3"
-            disabled={isLoading || !passwordsMatch || !isStrongCurrentPassword}
+            disabled={
+              isLoading ||
+              !passwordsMatch ||
+              !isStrongCurrentPassword ||
+              newAndOldMatch
+            }
           >
             {isLoading ? (
               <span className="loading loading-spinner loading-sm"></span>

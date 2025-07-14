@@ -4,7 +4,7 @@
 const Alert = ({message, status}) => {
 
   return (
-    <div className="w-auto mb-4 pr-7 pl-2 ">
+    <div className="mb-6 w-full ">
       <div
         role="alert"
         className={`alert ${
