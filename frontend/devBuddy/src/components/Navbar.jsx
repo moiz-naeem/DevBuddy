@@ -37,7 +37,7 @@ function Navbar() {
   return (
     <div className="navbar bg-base-300 shadow-sm">
       <div className="flex-1 ">
-        <a className="btn btn-ghost text-xl bg-base-100">daisyUI</a>
+        <a className="btn btn-ghost text-xl bg-base-100" onClick={() => navigate("/")}>daisyUI</a>
       </div>
       {user && (
         <div className="flex gap-2">

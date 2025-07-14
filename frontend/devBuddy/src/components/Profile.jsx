@@ -30,8 +30,10 @@ const Profile = () => {
   const [skills, setSkills] = useState(caseSensitiveData?.skills);
   const [isLoading, setIsLoading] = useState(false);
   const [alert, setAlert] = useState({ message: "", status: "" }); 
+  const [isSuccess, setIsSuccess] = useState(false)
 
 
+  
   const normalizedInitial = useMemo(
     () => ({
       firstName: normalizeValue(user?.firstName || ""),
@@ -64,7 +66,7 @@ const Profile = () => {
   console.dir(normalizedInitial, {depth: null});
   console.log("current")
   console.dir(normalizedCurrent, {depth: null});
-  console.log("has form changes " + hasFormChanged )
+  console.log(JSON.stringify(normalizedInitial) === JSON.stringify(normalizedCurrent))
   const profileSchema = Yup.object({
     firstName: Yup.string()
       .min(3, { message: "Minimum length for first name is 3" })
@@ -145,6 +147,7 @@ const Profile = () => {
         timeout: 1000,
       });
       console.log(res);
+      resetInitial(normalizedCurrent);
       dispatch(
         addUser({
           data: {
@@ -162,7 +165,7 @@ const Profile = () => {
           },
         })
       );
-      resetInitial(normalizedCurrent);
+
 
       setAlert({message: res.data.message, status: res.data.status});
     } catch (err) {

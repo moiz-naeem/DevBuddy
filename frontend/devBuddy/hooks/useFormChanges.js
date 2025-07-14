@@ -10,11 +10,18 @@ export const useFormChanges = (initialValues, currentValues) => {
   console.log("Initial values: " + initialValues.age)
 
   const hasChanged = useMemo(() => {
-    return JSON.stringify(currentValues) !== initialRef.current;
+    console.log("inside hasChanged: ")
+    console.log(initialRef.current)
+    console.log(JSON.stringify(currentValues))
+
+    console.log(JSON.stringify(currentValues) === (initialRef.current))
+    return JSON.stringify(currentValues) !== (initialRef.current);
   }, [currentValues]);
 
   const resetInitial = useCallback((newInitialValues) => {
+    console.log("inside reset: ")
     initialRef.current = JSON.stringify(newInitialValues);
+    console.log(initialRef.current)
   }, []);
 
   return [hasChanged, resetInitial];
