@@ -115,7 +115,8 @@ authRouter.post("/signup",  async (req, res) => {
     const{firstName, lastName, email, password} = req.body;
     validateSignUpData(req)
     const userExists = await User.find({email});
-    if(userExists){
+    console.log(userExists)
+    if(userExists.length !== 0){
       return res.status(400).json({message: "The email is already registered.", status: "fail"});
 
     }
