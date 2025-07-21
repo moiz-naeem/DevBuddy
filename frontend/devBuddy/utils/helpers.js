@@ -1,8 +1,8 @@
 import axios from "axios";
 
-export const fetchFeed = async() => {
+export const fetchFeed = async(page) => {
   try{
-        const res = await axios.get("http://localhost:6969/feed", {
+        const res = await axios.get(`http://localhost:6969/feed?page=${page}&&limit=10`, {
         withCredentials: true,
         headers: {
           "Content-Type": "application/json",

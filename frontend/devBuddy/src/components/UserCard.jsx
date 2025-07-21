@@ -8,9 +8,9 @@ const UserCard = ({firstName, lastName, about, age, photourl, skills}) => {
         />
       </figure>
       <div className="card-body">
-        <div className="flex flex-grow gap-5">
+        <div className="flex flex-grow gap-3 ">
             <h2 className="card-title">{firstName + " " + lastName}</h2>
-            <h3>{age}</h3>
+            <h1 className="card-title">{age}</h1>
         </div>
         <p>
            {about}

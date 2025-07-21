@@ -72,14 +72,14 @@ userRouter.get("/feed", userAuth, async (req, res) => {
     limit = limit > 50 ? 50 : limit;
     const loggedInUser = req.user;
 
-    const exisitingConnections =  await Connection.find({
+    const existingConnections =  await Connection.find({
         $or: [
             {firstParticipant: loggedInUser._id},
             {secondParticipant: loggedInUser._id}
         ]
   });
 
-    const anotherUserInConnection = exisitingConnections.map(connection => {
+    const anotherUserInConnection = existingConnections.map(connection => {
         if(connection.firstParticipant._id.equals(loggedInUser._id)){
             return connection.secondParticipant.toString()
         }
@@ -101,7 +101,7 @@ userRouter.get("/feed", userAuth, async (req, res) => {
         _id : {$nin: blockedUsers}
     }).skip((page-1)*10).limit(limit)
 
-    res.json({users: userForFeed, blocked: shouldNotBeInFeed});
+    res.json({length:userForFeed.length, users: userForFeed, blocked: shouldNotBeInFeed});
     
 
   } catch (err) {
