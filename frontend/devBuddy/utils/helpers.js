@@ -1,6 +1,22 @@
 import axios from "axios";
 
+export const fetchFeed = async() => {
+  try{
+        const res = await axios.get("http://localhost:6969/feed", {
+        withCredentials: true,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        timeout: 2000,
+      });
+      console.log(res?.data?.users)
+      return res?.data?.users;
 
+    }catch(err){
+        console.log(err.message || err?.response?.data || "Error while fetching the data")
+
+    }
+}
 
 export const fetchUser = async () => {
     

@@ -5,9 +5,7 @@ export const useFormChanges = (initialValues, currentValues) => {
   const initialRef = useRef((initialValues));
   const [resetCounter, setResetCounter] = useState(0); 
 
-   useEffect(() => {
-     console.log("Render after update")
-   }, [initialValues]);
+  
 
   console.log("Initial values: " + initialValues.age)
 
