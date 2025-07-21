@@ -10,6 +10,7 @@ import Profile from "./components/Profile";
 import ProtectedRoute from "./components/ProtectedRoute";
 import TabbedForm from "./components/TabbedForm";
 import Password from "./components/Password";
+import NotFound from "./components/Notfound";
 
 function App() {
   return (
@@ -17,6 +18,22 @@ function App() {
       <BrowserRouter basename="/">
         <Routes>
           <Route path="/" element={<Body />}>
+            <Route
+              path="*"
+              element={
+                <div className="flex-grow flex items-center justify-center">
+                  <NotFound
+                  baseIntensity={0.2}
+                  hoverIntensity={0.5}
+                  enableHover={true}
+                >
+                  404 - Not Found
+                </NotFound>
+
+                </div>
+                
+              }
+            />
             <Route
               path="/"
               element={
@@ -29,11 +46,11 @@ function App() {
               path="/profile"
               element={
                 <TabbedForm
-                  primaryComponent={Profile} 
+                  primaryComponent={Profile}
                   secondaryComponent={Password}
                   primaryLabel="Update profile"
                   secondaryLabel="Change password"
-                  size = "large"
+                  size="large"
                 />
               }
             />
@@ -50,11 +67,11 @@ function App() {
               path="/auth"
               element={
                 <TabbedForm
-                  primaryComponent={Login} 
+                  primaryComponent={Login}
                   secondaryComponent={Signup}
                   primaryLabel="Login"
                   secondaryLabel="Sign Up"
-                  size = "medium"
+                  size="medium"
                 />
               }
             />
