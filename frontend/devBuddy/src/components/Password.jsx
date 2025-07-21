@@ -25,28 +25,25 @@ const Password = () => {
 
   const passwordSchema = Yup.object({
     currentPassword: Yup.string()
-      .max(100, { message: "Password can not exceed 100 characters" })
+      .max(100, "Password can not exceed 100 characters" )
       .required("Current password is required")
-      .matches(passwordRegex, {
-        message:
+      .matches(passwordRegex, 
           "Current Password must be 8+ characters with uppercase, lowercase, number & special character.",
-        excludeEmptyString: true,
-      }),
+           {excludeEmptyString: true}
+      ),
     newPassword: Yup.string()
-      .max(100, { message: "Password can not exceed 100 characters" })
+      .max(100, "Password can not exceed 100 characters" )
       .required("New password is required")
-      .matches(passwordRegex, {
-        message:
+      .matches(passwordRegex, 
           "New Password must be 8+ characters with uppercase, lowercase, number & special character.",
-        excludeEmptyString: true,
+        {excludeEmptyString: true,
       }),
     confirmNewPassword: Yup.string()
-      .max(100, { message: "Password can not exceed 100 characters" })
+      .max(100,  "Password can not exceed 100 characters" )
       .required("Confirm new password is required")
-      .matches(passwordRegex, {
-        message:
+      .matches(passwordRegex, 
           "New Password must be 8+ characters with uppercase, lowercase, number & special character.",
-        excludeEmptyString: true,
+       {excludeEmptyString: true,
       }),
   });
 

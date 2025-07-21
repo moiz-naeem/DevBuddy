@@ -1,7 +1,9 @@
-import { useRef, useMemo, useCallback , useEffect} from "react";
+import { useRef, useMemo, useCallback , useEffect, useState} from "react";
+import isEqual from 'lodash/isEqual';
 
 export const useFormChanges = (initialValues, currentValues) => {
-  const initialRef = useRef(JSON.stringify(initialValues));
+  const initialRef = useRef((initialValues));
+  const [resetCounter, setResetCounter] = useState(0); 
 
    useEffect(() => {
      console.log("Render after update")
@@ -11,16 +13,20 @@ export const useFormChanges = (initialValues, currentValues) => {
 
   const hasChanged = useMemo(() => {
     console.log("inside hasChanged: ")
-    console.log(initialRef.current)
-    console.log(JSON.stringify(currentValues))
 
-    console.log(JSON.stringify(currentValues) === (initialRef.current))
-    return JSON.stringify(currentValues) !== (initialRef.current);
-  }, [currentValues]);
+    console.dir(initialRef.current)
+
+    console.dir(currentValues)
+
+    console.log( isEqual(currentValues, initialRef.current))
+
+    return !isEqual(currentValues, initialRef.current);
+  }, [currentValues, resetCounter]);
 
   const resetInitial = useCallback((newInitialValues) => {
     console.log("inside reset: ")
-    initialRef.current = JSON.stringify(newInitialValues);
+    initialRef.current = newInitialValues;
+    setResetCounter(prev => prev + 1);
     console.log(initialRef.current)
   }, []);
 

@@ -12,6 +12,7 @@ import { normalizeValue } from "../../utils/helpers";
 import { useDispatch } from "react-redux";
 import { addUser } from "../../utils/userSlice";
 import Alert from "./Alert";
+import isEqual from 'lodash/isEqual';
 
 const Profile = () => {
   const data = useSelector((store) => store?.user?.data);
@@ -66,17 +67,19 @@ const Profile = () => {
   console.dir(normalizedInitial, {depth: null});
   console.log("current")
   console.dir(normalizedCurrent, {depth: null});
-  console.log(JSON.stringify(normalizedInitial) === JSON.stringify(normalizedCurrent))
+
+  console.log( isEqual(normalizedInitial, normalizedCurrent))
+
   const profileSchema = Yup.object({
     firstName: Yup.string()
-      .min(3, { message: "Minimum length for first name is 3" })
-      .max(50, { message: "Maximum length for first name is 50" })
+      .min(3,  "Minimum length for first name is 3" )
+      .max(50,  "Maximum length for first name is 50" )
       .lowercase("First name must be lowercase"),
     lastName: Yup.string()
-      .min(3, { message: "Minimum length for last name is 3" })
-      .max(50, { message: "Minimum length for first name is 3" })
+      .min(3,  "Minimum length for last name is 3" )
+      .max(50, "Minimum length for first name is 3" )
       .lowercase("Last name must be lowercase"),
-    age: Yup.number().min(12, { message: "Minimum length to register is 12" }),
+    age: Yup.number().min(12, "Minimum length to register is 12" ),
     about: Yup.string().max(
       200,
       "Stop being self centered the max length for about section is 200"
@@ -84,16 +87,15 @@ const Profile = () => {
     skills: Yup.array(
       Yup.object({
         id: Yup.number()
-          .min(1, { message: "Skill id can not be 0 or negative" })
+          .min(1,  "Skill id can not be 0 or negative" )
           .required(),
         label: Yup.string()
           .max(200, "No skills has length greater or equal to 200")
           .required(),
       })
-    ).max(10, {
-      message:
+    ).max(10, 
         "Looks like your are highly skilled but you can only add 10 skills",
-    }),
+    ),
     picture: Yup.string().url(),
     // .matches(
     //     /((https?):\/\/)?(www.)?[a-z0-9]+(\.[a-z]{2,}){1,3}(#?\/?[a-zA-Z0-9#]+)*\/?(\?[a-zA-Z0-9-_]+=[a-zA-Z0-9-%]+&?)?$/,
@@ -103,9 +105,12 @@ const Profile = () => {
   const handleSkillSelect = (skill) => {
     const alreadySelected = skills.some((s) => s.id === skill.id);
     if (alreadySelected) return;
+
     setSkills([...skills, skill]);
+
   };
   const handleUpdateFile = async (e) => {
+
     e.preventDefault();
     setIsLoading(true);
     setAlert({ message: "", status: "" })
@@ -126,15 +131,20 @@ const Profile = () => {
       console.log(userInput);
 
 
+
       await profileSchema.validate(userInput);
+
       const currentUserData = { ...data, ...caseSensitiveData };
+
       const changes = getChangedFields(currentUserData, userInput);
+
       console.log("Sending patch request with body = ");
       console.log(changes);
 
       if (Object.keys(changes).length === 0) {
         throw new Error("To update profile you need to change something");
       }
+
       const res = await axios({
         method: "PATCH",
         url: "http://localhost:6969/profile/edit",
@@ -146,8 +156,11 @@ const Profile = () => {
         },
         timeout: 1000,
       });
+      
       console.log(res);
+ 
       resetInitial(normalizedCurrent);
+
       dispatch(
         addUser({
           data: {
@@ -164,12 +177,12 @@ const Profile = () => {
             email: user.email,
           },
         })
-      );
 
+      );
 
       setAlert({message: res.data.message, status: res.data.status});
     } catch (err) {
-      console.log(err);
+      console.log(err.message);
       setAlert({
         message: err?.response?.data?.message ||
           err?.message ||
@@ -185,6 +198,7 @@ const Profile = () => {
     <div>
       
       {alert.message && <Alert message={alert.message} status={alert.status}/>}
+      {console.log(hasFormChanged)}
       <form onSubmit={handleUpdateFile} className="max-w-xl mx-auto space-y-4">
         <div className="flex gap-4 w-full">
           <fieldset className="w-1/2">
@@ -249,7 +263,7 @@ const Profile = () => {
             type="number"
             className="input input-bordered w-full"
             value={age}
-            onChange={(e) => setAge(e.target.value)}
+            onChange={(e) => setAge(parseInt(e.target.value))}
             required
             disabled={isLoading}
           />

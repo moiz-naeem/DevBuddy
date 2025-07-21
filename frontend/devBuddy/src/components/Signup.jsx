@@ -30,10 +30,9 @@ const Signup = () => {
       .lowercase("Email should be in lowercase"),
     password: Yup.string()
       .required("Password is required")
-      .matches(passwordRegex, {
-        message:
+      .matches(passwordRegex, 
           "Password must be at least 8 characters long and include one uppercase, one lowercase, one number, and one special character.",
-        excludeEmptyString: true,
+        {excludeEmptyString: true,
       }),
   });
 

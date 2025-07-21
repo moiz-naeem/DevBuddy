@@ -50,11 +50,10 @@ const Login = () => {
         .lowercase("Email should be in lowercase"),
       password: Yup.string()
         .required("Password is required")
-        .matches(passwordRegex, {
-          message:
+        .matches(passwordRegex, 
             "Password must be 8+ characters with uppercase, lowercase, number & special character.",
-          excludeEmptyString: true,
-        }),
+          {excludeEmptyString: true}
+        ),
     });
 
   const handleLoginForm = async (e) => {
