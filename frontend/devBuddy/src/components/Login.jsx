@@ -14,6 +14,7 @@ const Login = () => {
   const [password, setPassword] = useState("Idontknowman2@");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
   
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -133,7 +134,6 @@ const Login = () => {
               disabled={isLoading}
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}
-              whileFocus={{ outline: "dashed #000" }}
               
               > {isLoading ? (
                   <span className="loading loading-spinner loading-sm"></span>

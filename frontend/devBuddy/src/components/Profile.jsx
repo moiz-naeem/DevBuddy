@@ -13,6 +13,8 @@ import { useDispatch } from "react-redux";
 import { addUser } from "../../utils/userSlice";
 import Alert from "./Alert";
 import isEqual from 'lodash/isEqual';
+import { motion } from "framer-motion";
+
 
 const Profile = () => {
   const data = useSelector((store) => store?.user?.data);
@@ -298,17 +300,20 @@ const Profile = () => {
         </fieldset>
 
         <div className="card-actions flex justify-center">
-          <button
+
+          <motion.button
             type="submit"
             className="btn bg-primary btn-md w-1/3 rounded-md"
             disabled={isLoading || !hasFormChanged }
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.95 }}
           >
             {isLoading ? (
               <span className="loading loading-spinner loading-sm"></span>
             ) : (
               "Update profile"
             )}
-          </button>
+          </motion.button>
         </div>
       </form>
     </div>

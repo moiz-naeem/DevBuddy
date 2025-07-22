@@ -4,6 +4,7 @@ import * as Yup from "yup";
 import axios from "axios";
 import { passwordRegex } from "../../utils/helpers";
 import Alert from "./Alert";
+import { motion } from "framer-motion";
 const Password = () => {
   const user = useSelector((store) => store?.user);
   const [isLoading, setIsLoading] = useState(false);
@@ -153,7 +154,7 @@ const Password = () => {
         </fieldset>
 
         <div className="card-actions flex justify-center ">
-          <button
+          <motion.button
             type="submit"
             className="btn bg-primary btn-md rounded-md w-1/3"
             disabled={
@@ -162,13 +163,15 @@ const Password = () => {
               !isStrongCurrentPassword ||
               newAndOldMatch
             }
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.95 }}
           >
             {isLoading ? (
               <span className="loading loading-spinner loading-sm"></span>
             ) : (
               "Update Password"
             )}
-          </button>
+          </motion.button>
         </div>
       </form>
     </div>

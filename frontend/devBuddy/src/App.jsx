@@ -11,6 +11,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import TabbedForm from "./components/TabbedForm";
 import Password from "./components/Password";
 import NotFound from "./components/Notfound";
+import SwipeCards from "./components/SwipeCard";
 
 function App() {
   return (
@@ -52,6 +53,14 @@ function App() {
                   secondaryLabel="Change password"
                   size="large"
                 />
+              }
+            />
+            <Route
+              path="/cards"
+              element={
+                <ProtectedRoute>
+                  <SwipeCards/>
+                </ProtectedRoute>
               }
             />
             <Route

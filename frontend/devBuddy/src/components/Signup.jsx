@@ -3,6 +3,7 @@ import * as Yup from "yup";
 import axios from "axios";
 import Alert from "./Alert";
 import { passwordRegex } from "../../utils/helpers";
+import { motion } from "framer-motion";
 
 const Signup = () => {
   const [firstName, setFirstName] = useState("Jim");
@@ -124,17 +125,19 @@ const Signup = () => {
       </fieldset>
 
       <div className="card-actions flex justify-center">
-        <button
+        <motion.button
           type="submit"
           className="btn bg-primary text-white px-6 py-2 self-center mx-auto min-w-fit"
           disabled={isLoading}
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.95 }}
         >
           {isLoading ? (
             <span className="loading loading-spinner loading-sm"></span>
           ) : (
             "Sign Up"
           )}
-        </button>
+        </motion.button>
       </div>
     </form>
     </div>

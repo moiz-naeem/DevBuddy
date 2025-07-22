@@ -47,7 +47,7 @@ const Feed = () => {
 
   return (
     <div className="flex flex-wrap m-10">
-      <div className="flex flex-wrap gap-20 w-full" {...handlers}>
+      <div className="flex flex-wrap gap-20 w-full" >
         <UserCard key={users[currentIndex]._id} {...users[currentIndex]} />
       </div>
     </div>
