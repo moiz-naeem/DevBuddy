@@ -1,15 +1,21 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, useMotionValue, useTransform } from "framer-motion";
 
 
 const SwipeCards = ({ users, setPage }) => {
   const [cards, setCards] = useState(users);
   console.dir(cards);
+  useEffect(() => {
+    console.log("rendered")
+    if (cards.length === 0 && users.length > 0) {
+      setPage(prev => prev + 1);
+    }
+  }, [cards.length, users.length, setPage]);
   return (
     <div className="relative h-[500px] w-full flex justify-center items-center bg-gray-100">
       {cards.map((card) => {
         return (
-          <Card key={card._id} cards={cards} setCards={setCards} {...card} setPage={setPage}/>
+          <Card key={card._id} cards={cards} setCards={setCards} {...card} />
         );
       })}
     </div>
@@ -25,7 +31,6 @@ const Card = ({
   photourl,
   skills,
   setCards,
-  setPage,
   cards,
 }) => {
   const x = useMotionValue(0);
@@ -40,18 +45,14 @@ const Card = ({
     return `${rotateRaw.get() + offset}deg`;
   });
 
-  const handleDragEnd = () => {
-  const threshold = 100;
-  if (Math.abs(x.get()) > threshold) {
-    setCards((pv) => {
-      const newCards = pv.filter((v) => v._id !== _id);
-      if (newCards.length === 0) {
-        setPage(prev => prev + 1);
-      }
-      return newCards;
-    });
-  }
-};
+
+
+ const handleDragEnd = () => {
+    const threshold = 100;
+    if (Math.abs(x.get()) > threshold) {
+      setCards((pv) => pv.filter((v) => v._id !== _id));
+    }
+  };
 
   return (
     <motion.div
