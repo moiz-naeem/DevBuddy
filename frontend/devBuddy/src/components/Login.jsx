@@ -6,6 +6,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import Alert from "./Alert";
 import * as Yup from "yup";
 import { passwordRegex } from "../../utils/helpers";
+import { motion } from "framer-motion";
 
 
 const Login = () => {
@@ -127,7 +128,20 @@ const Login = () => {
             </fieldset>
             
             <div className="card-actions flex justify-center ">
-              <button
+              <motion.button className="btn bg-primary text-white px-6 py-2 self-center mx-auto min-w-fit"
+              type="submit"
+              disabled={isLoading}
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.95 }}
+              whileFocus={{ outline: "dashed #000" }}
+              
+              > {isLoading ? (
+                  <span className="loading loading-spinner loading-sm"></span>
+                ) : (
+                  "Login"
+                )}
+              </motion.button>
+              {/* <button
                 type="submit"
                 className="btn bg-primary text-white px-6 py-2 self-center mx-auto min-w-fit"
                 disabled={isLoading}
@@ -137,7 +151,7 @@ const Login = () => {
                 ) : (
                   "Login"
                 )}
-              </button>
+              </button> */}
             </div>
           </form>
         </div>

@@ -1,17 +1,11 @@
 import axios from "axios";
-import { useSwipeable } from "react-swipeable";
+
 
 import UserCard from "./UserCard";
 import { fetchFeed } from "../../utils/helpers";
 
 import { useEffect, useState } from "react";
 const Feed = () => {
-  const handlers = useSwipeable({
-  onSwipedLeft: () => handleNext(),
-  onSwipedRight: () => handlePrevious(),
-  preventDefaultTouchmoveEvent: true,
-  trackMouse: true, 
-});
 
   const [users, setUsers] = useState([]);
   const [page, setPage] = useState(1)
