@@ -3,6 +3,7 @@ import axios from "axios";
 
 import UserCard from "./UserCard";
 import { fetchFeed } from "../../utils/helpers";
+import SwipeCards from "./SwipeCard";
 
 import { useEffect, useState } from "react";
 const Feed = () => {
@@ -48,7 +49,7 @@ const Feed = () => {
   return (
     <div className="flex flex-wrap m-10">
       <div className="flex flex-wrap gap-20 w-full" >
-        <UserCard key={users[currentIndex]._id} {...users[currentIndex]} />
+        <SwipeCards users = {users} setPage={setPage} />
       </div>
     </div>
     
