@@ -26,26 +26,32 @@ const SwipeCard = ({
   const handleDragEnd = () => {
     const threshold = 100;
     if (Math.abs(x.get()) > threshold) {
+
+      const isLastCard = cards.length === 1;
+      
       setCards((pv) => {
         const newCards = pv.filter((v) => v._id !== _id);
-        // Check if this was the last card
-        if (newCards.length === 0) {
-          onCardRemoved();
-        }
         return newCards;
       });
+
+      if (isLastCard) {
+        onCardRemoved();
+      }
     }
   };
 
   const handleButtonClick = (action) => {
+
+    const isLastCard = cards.length === 1;
+    
     setCards((pv) => {
       const newCards = pv.filter((v) => v._id !== _id);
-      // Check if this was the last card
-      if (newCards.length === 0) {
-        onCardRemoved();
-      }
       return newCards;
     });
+
+    if (isLastCard) {
+      onCardRemoved();
+    }
   };
 
   return (

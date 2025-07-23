@@ -16,21 +16,28 @@ const Feed = () => {
     try {
       const data = await fetchFeed(pageNum);
       setUsers(data);
-      console.log("response", data);
+      console.log("Fetched users for page", pageNum, ":", data);
     } catch (error) {
       console.error("Error fetching users:", error);
+
     } finally {
       setLoading(false);
     }
   };
+
 
   useEffect(() => {
     fetchNewUsers(page);
   }, [page]);
 
   const handleLastCardRemoved = () => {
-    setPage(prev => prev + 1);
+    console.log("Last card removed, fetching next page...");
+    setPage(prev => {
+      console.log("Setting page from", prev, "to", prev + 1);
+      return prev + 1;
+    });
   };
+
 
   if (loading) {
     return (
@@ -44,30 +51,31 @@ const Feed = () => {
     );
   }
 
+
+  if (users?.length === 0 && !loading) {
+    return (
+      <div className="flex justify-center items-center h-[500px]">
+        <p className="text-xl text-gray-600">Sorry, no more people to add here</p>
+      </div>
+    );
+  }
+
   return (
-    <>
-      {users?.length === 0 && !loading ? (
-        <div className="flex justify-center items-center h-[500px]">
-          <p className="text-xl text-gray-600">Sorry, no more people to add here</p>
+    <div className="flex flex-wrap m-10">
+      <div className="flex flex-wrap gap-20 w-full justify-center">
+        <div className="relative h-[500px] w-full flex justify-center items-center bg-gray-100">
+          {users.map((user) => (
+            <SwipeCard
+              key={user._id}
+              cards={users}
+              setCards={setUsers}
+              onCardRemoved={handleLastCardRemoved}
+              {...user}
+            />
+          ))}
         </div>
-      ) : (
-        <div className="flex flex-wrap m-10">
-          <div className="flex flex-wrap gap-20 w-full justify-center">
-            <div className="relative h-[500px] w-full flex justify-center items-center bg-gray-100">
-              {users.map((card) => (
-                <SwipeCard
-                  key={card._id}
-                  cards={users}
-                  setCards={setUsers}
-                  onCardRemoved={handleLastCardRemoved}
-                  {...card}
-                />
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
-    </>
+      </div>
+    </div>
   );
 };
 
