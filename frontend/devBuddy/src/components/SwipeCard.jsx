@@ -24,9 +24,17 @@ const SwipeCard = ({
     return `${rotateRaw.get() + offset}deg`;
   });
 
-  const handleDragEnd = () => {
+  const handleDragEnd = async () => {
     const threshold = 100;
-    if (Math.abs(x.get()) > threshold) {
+    const xValue = x.get()
+    if (Math.abs(xValue) > threshold) {
+        const action = xValue > 0 ? 'interested' : 'ignored'
+        try {
+        await sendRequest(action, _id);
+      } catch (error) {
+        console.error('Error sending request:', error);
+
+      }
 
       const isLastCard = cards.length === 1;
       
@@ -42,7 +50,12 @@ const SwipeCard = ({
   };
 
   const handleButtonClick = async (action) => {
-    await sendRequest(action, _id)
+    try {
+        await sendRequest(action, _id);
+      } catch (error) {
+        console.error('Error sending request:', error);
+
+      }
 
     const isLastCard = cards.length === 1;
     
