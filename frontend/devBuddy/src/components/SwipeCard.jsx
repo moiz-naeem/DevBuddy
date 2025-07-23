@@ -1,4 +1,5 @@
 import { motion, useMotionValue, useTransform } from "framer-motion";
+import { sendRequest } from "../../utils/helpers";
 
 const SwipeCard = ({
   _id,
@@ -40,7 +41,8 @@ const SwipeCard = ({
     }
   };
 
-  const handleButtonClick = (action) => {
+  const handleButtonClick = async (action) => {
+    await sendRequest(action, _id)
 
     const isLastCard = cards.length === 1;
     
@@ -118,13 +120,13 @@ const SwipeCard = ({
         <div className="card-actions justify-end gap-2">
           <button 
             className="btn btn-success text-white px-6"
-            onClick={() => handleButtonClick('add')}
+            onClick={() => handleButtonClick('interested')}
           >
             Add
           </button>
           <button 
             className="btn btn-error text-white px-6"
-            onClick={() => handleButtonClick('ignore')}
+            onClick={() => handleButtonClick('ignored')}
           >
             Ignore
           </button>
