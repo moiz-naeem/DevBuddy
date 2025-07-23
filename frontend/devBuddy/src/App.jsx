@@ -11,7 +11,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import TabbedForm from "./components/TabbedForm";
 import Password from "./components/Password";
 import NotFound from "./components/Notfound";
-import SwipeCards from "./components/SwipeCard";
+import Requests from './components/Requests'
 
 function App() {
   return (
@@ -56,10 +56,10 @@ function App() {
               }
             />
             <Route
-              path="/cards"
+              path="/requests"
               element={
                 <ProtectedRoute>
-                  <SwipeCards/>
+                  <Requests/>
                 </ProtectedRoute>
               }
             />

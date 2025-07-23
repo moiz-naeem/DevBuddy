@@ -35,6 +35,25 @@ export const sendRequest = async (status, userId) => {
     console.log(err.message || err?.response?.data || "Error while fetching the data")
   }
 }
+export const getRequests = async () => {
+  try{
+    const res = await axios({
+        method: "GET",
+        url: `http://localhost:6969/request/user/request/received`,
+        withCredentials: true,
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        timeout: 1000,
+      });
+      console.log(res?.data?.data)
+      return res?.data?.data
+
+  }catch{
+    console.log(err.message || err?.response?.data || "Error while fetching the data")
+  }
+}
 
 export const fetchUser = async () => {
     
