@@ -14,9 +14,8 @@ const UserCard = ({ user }) => {
   };
 
   return (
-    <div className="w-full m-5  aspect-[3/4] bg-black text-white rounded-lg overflow-hidden shadow-md flex flex-col transition-transform hover:scale-102 hover:shadow-lg">
-      {/* Image section - responsive height */}
-      <div className="flex-[2] w-full overflow-hidden">
+    <div className="w-full min-h-[400px] sm:min-h-[450px] md:min-h-[500px] bg-black text-white rounded-lg overflow-hidden shadow-md flex flex-col transition-transform hover:scale-102 hover:shadow-lg">
+      <div className="h-48 sm:h-56 md:h-64 lg:h-72 w-full overflow-hidden flex-shrink-0">
         <img
           src={photourl}
           alt={`${firstName} ${lastName}`}
@@ -24,52 +23,52 @@ const UserCard = ({ user }) => {
         />
       </div>
 
-      {/* Content section - responsive to remaining space */}
-      <div className="flex-[1] p-2 sm:p-3 flex flex-col justify-between min-h-0">
-        <div className="flex-grow">
-          {/* Header with name and age */}
-          <div className="flex justify-between items-center mb-1 sm:mb-2">
-            <h2 className="text-xs sm:text-sm md:text-base font-semibold truncate pr-2">
+
+      <div className="flex-1 p-3 sm:p-4 flex flex-col justify-between min-h-[180px]">
+        <div className="flex-grow space-y-2 sm:space-y-3">
+
+          <div className="flex justify-between items-center">
+            <h2 className="text-sm sm:text-base md:text-lg font-semibold truncate pr-2">
               {firstName} {lastName}
             </h2>
-            <span className="text-xs sm:text-sm text-gray-300 flex-shrink-0">
+            <span className="text-sm sm:text-base text-gray-300 flex-shrink-0">
               {age}
             </span>
           </div>
 
-          {/* About section */}
-          <p className="text-[15px] sm:text-md text-gray-400 mb-2 line-clamp-2 leading-tight">
+
+          <p className="text-xs sm:text-sm md:text-base text-gray-400 line-clamp-2 leading-relaxed">
             {about}
           </p>
 
-          {/* Skills section - responsive wrapping */}
-          <div className="flex flex-wrap gap-1 mb-2">
+
+          <div className="flex flex-wrap gap-1 sm:gap-2">
             {skills.slice(0, 4).map((skill) => (
               <div
                 key={skill._id}
-                className="bg-gray-800 text-white px-1.5 py-1 rounded text-[20px] sm:text-[15px] md:text-l leading-tight"
+                className="bg-gray-800 text-white px-2 py-1 rounded text-xs sm:text-sm md:text-base leading-tight"
               >
                 {skill.label}
               </div>
             ))}
             {skills.length > 4 && (
-              <span className="bg-gray-700 text-white px-1.5 py-1 rounded text-[20px] sm:text-[15px] md:text-l leading-tight">
+              <span className="bg-gray-700 text-white px-2 py-1 rounded text-xs sm:text-sm md:text-base leading-tight">
                 +{skills.length - 4}
               </span>
             )}
           </div>
         </div>
 
-        {/* Action buttons - always at bottom */}
-        <div className="flex w-[100%] justify-end gap-1 sm:gap-2 mt-auto pt-2">
+
+        <div className="flex w-full justify-end gap-2 mt-4 pt-2 border-t border-gray-700">
           <button
-            className="btn btn-success flex-1  text-[20px] sm:text-lg px-2 py-1 rounded transition-colors duration-200 flex-shrink-0 hover:scale-110"
+            className="btn btn-success flex-1 text-xs sm:text-sm md:text-base px-3 py-2 rounded transition-all duration-200 hover:scale-105 min-h-[36px] sm:min-h-[40px]"
             onClick={() => handleButtonClick("interested")}
           >
             Accept
           </button>
           <button
-            className=" btn flex-1 btn-error hover:scale-110 text-white text-[20px] sm:text-md px-2 py-1 rounded transition-colors duration-200 flex-shrink-0 "
+            className="btn flex-1 btn-error hover:scale-105 text-white text-xs sm:text-sm md:text-base px-3 py-2 rounded transition-all duration-200 min-h-[36px] sm:min-h-[40px]"
             onClick={() => handleButtonClick("ignored")}
           >
             Reject
