@@ -1,28 +1,6 @@
-import React, { useState, useEffect } from "react";
 import { motion, useMotionValue, useTransform } from "framer-motion";
 
-
-const SwipeCards = ({ users, setPage }) => {
-  const [cards, setCards] = useState(users);
-  console.dir(cards);
-  useEffect(() => {
-    console.log("rendered")
-    if (cards.length === 0 && users.length > 0) {
-      setPage(prev => prev + 1);
-    }
-  }, [cards.length, users.length, setPage]);
-  return (
-    <div className="relative h-[500px] w-full flex justify-center items-center bg-gray-100">
-      {cards.map((card) => {
-        return (
-          <Card key={card._id} cards={cards} setCards={setCards} {...card} />
-        );
-      })}
-    </div>
-  );
-};
-
-const Card = ({
+const SwipeCard = ({
   _id,
   firstName,
   lastName,
@@ -32,9 +10,9 @@ const Card = ({
   skills,
   setCards,
   cards,
+  onCardRemoved,
 }) => {
   const x = useMotionValue(0);
-
   const rotateRaw = useTransform(x, [-150, 150], [-18, 18]);
   const opacity = useTransform(x, [-150, 0, 150], [0, 1, 0]);
 
@@ -45,18 +23,34 @@ const Card = ({
     return `${rotateRaw.get() + offset}deg`;
   });
 
-
-
- const handleDragEnd = () => {
+  const handleDragEnd = () => {
     const threshold = 100;
     if (Math.abs(x.get()) > threshold) {
-      setCards((pv) => pv.filter((v) => v._id !== _id));
+      setCards((pv) => {
+        const newCards = pv.filter((v) => v._id !== _id);
+        // Check if this was the last card
+        if (newCards.length === 0) {
+          onCardRemoved();
+        }
+        return newCards;
+      });
     }
+  };
+
+  const handleButtonClick = (action) => {
+    setCards((pv) => {
+      const newCards = pv.filter((v) => v._id !== _id);
+      // Check if this was the last card
+      if (newCards.length === 0) {
+        onCardRemoved();
+      }
+      return newCards;
+    });
   };
 
   return (
     <motion.div
-      className="card bg-black w-96 shadow-sm absolute"
+      className="card bg-black w-96 shadow-sm absolute text-white"
       style={{
         x,
         rotate,
@@ -95,33 +89,43 @@ const Card = ({
     >
       <img
         src={photourl}
-        alt="Placeholder alt"
+        alt={`${firstName} ${lastName}`}
         className="h-96 w-full rounded-t-lg bg-white object-cover select-none pointer-events-none"
       />
 
-      <div className="card-body">
-        <div className="flex flex-grow gap-3 ">
-          <h2 className="card-title">{firstName + " " + lastName}</h2>
-          <h1 className="card-title">{age}</h1>
+      <div className="card-body p-4">
+        <div className="flex flex-grow gap-3 items-center">
+          <h2 className="card-title text-xl font-bold">{firstName + " " + lastName}</h2>
+          <h1 className="card-title text-lg">{age}</h1>
         </div>
-        <p>{about}</p>
-        <div className="flex flex-wrap w-full">
-          {skills?.map((skill, index) => (
+        <p className="text-gray-300 my-2">{about}</p>
+        <div className="flex flex-wrap w-full gap-1 mb-4">
+          {skills?.map((skill) => (
             <div
               key={skill.id}
-              className=" flex basis-1/6 bg-gray-800 p-2 m-1 text-center rounded justify-between items-center"
+              className="bg-gray-800 px-3 py-1 text-sm rounded-full text-center"
             >
               {skill.label}
             </div>
           ))}
         </div>
-        <div className="card-actions justify-end">
-          <button className="btn btn-primary">Add</button>
-          <button className="btn btn-primary">Ignore</button>
+        <div className="card-actions justify-end gap-2">
+          <button 
+            className="btn btn-success text-white px-6"
+            onClick={() => handleButtonClick('add')}
+          >
+            Add
+          </button>
+          <button 
+            className="btn btn-error text-white px-6"
+            onClick={() => handleButtonClick('ignore')}
+          >
+            Ignore
+          </button>
         </div>
       </div>
     </motion.div>
   );
 };
 
-export default SwipeCards;
+export default SwipeCard
