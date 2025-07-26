@@ -12,7 +12,6 @@ import { normalizeValue } from "../../utils/helpers";
 import { useDispatch } from "react-redux";
 import { addUser } from "../../utils/userSlice";
 import Alert from "./Alert";
-import isEqual from 'lodash/isEqual';
 import { motion } from "framer-motion";
 
 
