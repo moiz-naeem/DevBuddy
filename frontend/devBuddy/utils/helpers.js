@@ -9,7 +9,7 @@ export const fetchFeed = async(page) => {
         },
         timeout: 2000,
       });
-      console.log(res?.data?.users)
+
       return res?.data?.users;
 
     }catch(err){

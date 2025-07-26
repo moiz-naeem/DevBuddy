@@ -65,12 +65,8 @@ const Profile = () => {
     normalizedInitial,
     normalizedCurrent
   );
-  console.log("initial")
-  console.dir(normalizedInitial, {depth: null});
-  console.log("current")
-  console.dir(normalizedCurrent, {depth: null});
 
-  console.log( isEqual(normalizedInitial, normalizedCurrent))
+ 
 
   const profileSchema = Yup.object({
     firstName: Yup.string()
@@ -130,7 +126,7 @@ const Profile = () => {
         skills: skills,
       });
 
-      console.log(userInput);
+
 
 
 
@@ -140,8 +136,6 @@ const Profile = () => {
 
       const changes = getChangedFields(currentUserData, userInput);
 
-      console.log("Sending patch request with body = ");
-      console.log(changes);
 
       if (Object.keys(changes).length === 0) {
         throw new Error("To update profile you need to change something");
@@ -159,7 +153,7 @@ const Profile = () => {
         timeout: 1000,
       });
       
-      console.log(res);
+
  
       resetInitial(normalizedCurrent);
 
@@ -184,7 +178,6 @@ const Profile = () => {
 
       setAlert({message: res.data.message, status: res.data.status});
     } catch (err) {
-      console.log(err.message);
       setAlert({
         message: err?.response?.data?.message ||
           err?.message ||
@@ -200,7 +193,7 @@ const Profile = () => {
     <div>
       
       {alert.message && <Alert message={alert.message} status={alert.status}/>}
-      {console.log(hasFormChanged)}
+
       <form onSubmit={handleUpdateFile} className="max-w-xl mx-auto space-y-4">
         <div className="flex gap-4 w-full">
           <fieldset className="w-1/2">

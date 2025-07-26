@@ -5,7 +5,7 @@ const dotenv = require('dotenv')
 
 dotenv.config({ path: '././.env' });
 
-console.log("JWT_SECRET loaded:", !!process.env.JWT_SECRET);
+
 
 const userAuth = async (req, res, next) => {
   try {
@@ -20,7 +20,7 @@ const userAuth = async (req, res, next) => {
         return res.status(400).json({message: "Error: No valid session found"})
     }
     req.user = user;
-    console.log(user);
+
     next();
   } catch (err) {
     return res.status(400).send("Error durinf user authentication" + err);

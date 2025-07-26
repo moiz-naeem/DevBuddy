@@ -16,7 +16,7 @@ const Feed = () => {
     try {
       const data = await fetchFeed(pageNum);
       setUsers(data);
-      console.log("Fetched users for page", pageNum, ":", data);
+
     } catch (error) {
       console.error("Error fetching users:", error);
 
@@ -31,9 +31,8 @@ const Feed = () => {
   }, [page]);
 
   const handleLastCardRemoved = () => {
-    console.log("Last card removed, fetching next page...");
     setPage(prev => {
-      console.log("Setting page from", prev, "to", prev + 1);
+
       return prev + 1;
     });
   };
