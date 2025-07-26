@@ -1,5 +1,6 @@
 import { useRef, useMemo, useCallback , useEffect, useState} from "react";
-import isEqual from 'lodash/isEqual';
+import { isEqual } from 'lodash';
+
 
 export const useFormChanges = (initialValues, currentValues) => {
   const initialRef = useRef((initialValues));
