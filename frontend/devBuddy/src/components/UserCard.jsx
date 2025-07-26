@@ -1,9 +1,8 @@
 import { sendRequest } from "../../utils/helpers";
 
-const UserCard = ({ user }) => {
-  const { data, caseSensitiveData } = user || {};
-  const { firstName, lastName, about, age } = data || {};
-  const { skills = [], photourl } = caseSensitiveData || {};
+const UserCard = ({ request }) => {
+  const { firstName, lastName, about, photourl, skills} = request.sendBy || {}; //backend should be sending age but it is not available need to make sure
+  // const { skills = [], photourl } = caseSensitiveData || {};
 
   const handleButtonClick = async (action) => {
     try {
@@ -32,7 +31,7 @@ const UserCard = ({ user }) => {
               {firstName} {lastName}
             </h2>
             <span className="text-sm sm:text-base text-gray-300 flex-shrink-0">
-              {age}
+              {0}
             </span>
           </div>
 
