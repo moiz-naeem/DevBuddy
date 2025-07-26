@@ -69,6 +69,9 @@ function Navbar() {
                 <a>Settings</a>
               </li>
               <li>
+                <a onClick={()=> navigate("/requests")}>Requests</a>
+              </li>
+              <li>
                 <a onClick={handleSignOut}>Logout</a>
               </li>
             </ul>

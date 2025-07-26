@@ -1,12 +1,15 @@
-import { sendRequest } from "../../utils/helpers";
+import { reviewRequest } from "../../utils/helpers";
 
 const UserCard = ({ request }) => {
-  const { firstName, lastName, about, photourl, skills} = request.sendBy || {}; //backend should be sending age but it is not available need to make sure
+  const{_id} = request
+  const { firstName, lastName, about, photourl, skills} = request.sendBy || {};
+  const {age} =  request.sendBy || 0;
+   //backend should be sending age but it is not available need to make sure
   // const { skills = [], photourl } = caseSensitiveData || {};
 
   const handleButtonClick = async (action) => {
     try {
-      await sendRequest(action, "mock_id_123");
+      await reviewRequest(action, _id);
     } catch (error) {
       console.error("Error sending request:", error);
     }
@@ -31,7 +34,7 @@ const UserCard = ({ request }) => {
               {firstName} {lastName}
             </h2>
             <span className="text-sm sm:text-base text-gray-300 flex-shrink-0">
-              {0}
+              {age}
             </span>
           </div>
 
@@ -62,13 +65,13 @@ const UserCard = ({ request }) => {
         <div className="flex w-full justify-end gap-2 mt-4 pt-2 border-t border-gray-700">
           <button
             className="btn btn-success flex-1 text-xs sm:text-sm md:text-base px-3 py-2 rounded transition-all duration-200 hover:scale-105 min-h-[36px] sm:min-h-[40px]"
-            onClick={() => handleButtonClick("interested")}
+            onClick={() => handleButtonClick("accepted")}
           >
             Accept
           </button>
           <button
             className="btn flex-1 btn-error hover:scale-105 text-white text-xs sm:text-sm md:text-base px-3 py-2 rounded transition-all duration-200 min-h-[36px] sm:min-h-[40px]"
-            onClick={() => handleButtonClick("ignored")}
+            onClick={() => handleButtonClick("rejected")}
           >
             Reject
           </button>

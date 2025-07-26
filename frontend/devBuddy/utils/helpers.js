@@ -17,6 +17,25 @@ export const fetchFeed = async(page) => {
 
     }
 }
+export const reviewRequest = async(status, requestId) =>{
+   try{
+    const res = await axios({
+        method: "POST",
+        url: `http://localhost:6969/request/review/${status}/${requestId}`,
+        withCredentials: true,
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        timeout: 1000,
+      });
+
+  }catch(err){
+    console.log(err.message || err?.response?.data || "Error while fetching the data")
+  }
+
+
+}
 
 export const sendRequest = async (status, userId) => {
   try{
