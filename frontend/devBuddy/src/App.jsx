@@ -10,7 +10,7 @@ import Profile from "./components/Profile";
 import ProtectedRoute from "./components/ProtectedRoute";
 import TabbedForm from "./components/TabbedForm";
 import Password from "./components/Password";
-import NotFound from "./components/Notfound";
+import NotFound from "./components/NotFound";
 import Requests from './components/Requests'
 
 function App() {

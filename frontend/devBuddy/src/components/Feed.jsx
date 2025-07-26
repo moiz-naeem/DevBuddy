@@ -55,7 +55,7 @@ const Feed = () => {
   if (users?.length === 0 && !loading) {
     return (
       <EmptyRequestShimmer heading={"No New Users"} secondaryHeading={"You have already interacted with all of the registered users. Check back later requests to connect with others."}
-    buttonTitle={"Explore Profiles"} action = {"/requests"}/>
+    buttonTitle={"Explore Requests"} action = {"/requests"}/>
     );
   }
 
