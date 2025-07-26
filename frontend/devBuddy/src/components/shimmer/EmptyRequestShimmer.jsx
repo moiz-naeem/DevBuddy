@@ -7,7 +7,7 @@ const EmptyRequestShimmer = () => (
         </svg>
       </div>
       
-      <h3 className="text-xl font-semibold text-gray-900 mb-2">
+      <h3 className="text-xl font-semibold text-black mb-2">
         No New Requests
       </h3>
       
