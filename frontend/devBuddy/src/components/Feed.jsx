@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 
 import { fetchFeed } from "../../utils/helpers";
 import SwipeCard from "./SwipeCard";
-import ShimmerCard from "./ShimmerCard";
+import ShimmerCard from "./shimmer/ShimmerCard";
 
 
 
