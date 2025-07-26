@@ -2,8 +2,8 @@ import UserCard from "./UserCard";
 import { getRequests } from "../../utils/helpers";
 import { useEffect, useState } from "react";
 import EmptyRequestShimmer from "./shimmer/EmptyRequestShimmer";
-import ShimmerCard from "./shimmer/ShimmerCard";
 import ErrorShimmer from "./shimmer/ErrorShimmer";
+import ShimmerRequestCard from "./shimmer/ShimmerRequestCard";
 
 const Requests = () => {
   const [requests, setRequests] = useState([])
@@ -19,9 +19,7 @@ const fetchRequests = async () => {
     } catch (err) {
       console.error("Error fetching requests:", err);
       setError(err?.response?.message || "Failed to fetch requests");
-    } finally {
-      setIsLoading(false);
-    }
+    } 
   };
 
   useEffect(() => {
@@ -40,8 +38,8 @@ if (isLoading) {
     return (
       <div className="w-full min-h-screen p-4 sm:p-6 lg:p-8">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-6">
-          {Array.from({ length: 8 }).map((_, index) => (
-            <ShimmerCard key={index} />
+          {Array.from({ length: 10 }).map((_, index) => (
+            <ShimmerRequestCard key={index} />
           ))}
         </div>
       </div>
@@ -59,10 +57,10 @@ if (isLoading) {
 return (
     <div className="w-full min-h-screen p-4 sm:p-6 lg:p-8">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">
+        <h1 className="text-2xl font-bold text-gray-500 mb-2">
           Connection Requests
         </h1>
-        <p className="text-gray-600">
+        <p className="text-white">
           {requests.length} {requests.length === 1 ? 'request' : 'requests'} waiting for your response
         </p>
       </div>
