@@ -19,7 +19,9 @@ const fetchRequests = async () => {
     } catch (err) {
       console.error("Error fetching requests:", err);
       setError(err?.response?.message || "Failed to fetch requests");
-    } 
+    } finally{
+      setIsLoading(false)
+    }
   };
 
   useEffect(() => {
