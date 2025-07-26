@@ -66,8 +66,8 @@ export const getRequests = async () => {
         },
         timeout: 1000,
       });
-      console.log(res?.data?.data)
-      return res?.data?.data
+      console.log(res?.data)
+      return res?.data
 
   }catch(err){
     console.log(err.message || err?.response?.data || "Error while fetching the data")

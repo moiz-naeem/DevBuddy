@@ -1,15 +1,16 @@
 import { reviewRequest } from "../../utils/helpers";
+import { useState, useEffect } from "react";
 
-const UserCard = ({ request }) => {
+const UserCard = ({ request , onRemove}) => {
   const{_id} = request
   const { firstName, lastName, about, photourl, skills} = request.sendBy || {};
   const {age} =  request.sendBy || 0;
-   //backend should be sending age but it is not available need to make sure
-  // const { skills = [], photourl } = caseSensitiveData || {};
+
 
   const handleButtonClick = async (action) => {
     try {
       await reviewRequest(action, _id);
+      onRemove(_id)
     } catch (error) {
       console.error("Error sending request:", error);
     }

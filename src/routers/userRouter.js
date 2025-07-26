@@ -49,12 +49,13 @@ userRouter.get("/user/request/received", userAuth, async (req, res) => {
         ).populate("sendBy", safeToSendUserData )
 
         if(requestsReceived.length === 0 ){
-            return res.status(404).json({
+            return res.status(200).json({
                 message: "You have no active requests",
-                requests: requestsReceived
+                data: requestsReceived
             })
         }
         return res.json({
+            message: "Success",
             data: requestsReceived
         })
 
