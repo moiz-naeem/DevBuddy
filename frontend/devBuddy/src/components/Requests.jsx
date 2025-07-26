@@ -50,7 +50,8 @@ if (isLoading) {
 
  if(requests.length == 0){
   return (
-    <EmptyRequestShimmer/>
+    <EmptyRequestShimmer heading={"No New Requests"} secondaryHeading={"You haven't received any new connection requests yet. Check back later or explore new profiles to connect with others."}
+    buttonTitle={"Explore Profiles"} action = {"/"}/>
   )
  }
 

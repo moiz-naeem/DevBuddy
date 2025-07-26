@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { fetchFeed } from "../../utils/helpers";
 import SwipeCard from "./SwipeCard";
 import ShimmerCard from "./shimmer/ShimmerCard";
+import EmptyRequestShimmer from "./shimmer/EmptyRequestShimmer";
 
 
 
@@ -53,9 +54,8 @@ const Feed = () => {
 
   if (users?.length === 0 && !loading) {
     return (
-      <div className="flex justify-center items-center h-[500px]">
-        <p className="text-xl text-gray-600">Sorry, no more people to add here</p>
-      </div>
+      <EmptyRequestShimmer heading={"No New Users"} secondaryHeading={"You have already interacted with all of the registered users. Check back later requests to connect with others."}
+    buttonTitle={"Explore Profiles"} action = {"/requests"}/>
     );
   }
 
